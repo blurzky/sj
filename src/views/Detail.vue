@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <TopNav/>
     <div class="top">
       <div class="title">
         <span class="name">{{name}}</span>
@@ -17,47 +16,40 @@
             <div class="num">{{point}}</div>
             <div class="process">
               <div class="stars">
-                <div class="cover" :style="{transform: `translateX(${point * 7.5}px)`}">
-                  <img src="../pic/detail/halfstar.png" v-if="num/2 % 0 != 1">
+                <img src="../pic/detail/star_after.png" v-for="(item,index) in (parseInt(point / 2))" :key="index">
+                <div class="cover" v-if="parseInt(point) % 2 !== 0">
+                  <div class="grey"/>
                 </div>
-                <img src="../pic/detail/star_after.png" class="star" v-for="(item,index) in 5" :key="index">
+                <img src="../pic/detail/halfstar.png" v-for="(item) in [6, 7, 8, 9, 10]" :key="item">
               </div>
-              <div class="people"><span>15</span>人评价</div>
+              <div class="people">{{person}}人评价</div>
             </div>
           </div>
           <div class="ratings">
             <div class="rating"  v-for="(item, index) in ratings" :key="index">
               <div class="level">{{5 - index}}星</div>
-              <div class="blue_line" :style="{width: `${item}px`}"></div>
-              <div class="rating_num">{{item}}%</div>
+              <div class="blue_line" :style="{width: `${item/person*100}px`}"></div>
+              <div class="rating_num" v-if="person">{{(item/person * 100 ).toFixed(1)}}%</div>
             </div>
           </div>
         </div>
       </div>
       <div class="see_star">
         <div class="see">想看</div>
-        <div class="saw">看过</div>
+        <div class="saw">喜欢</div>
         <div class="appraise">
           <span>评价：</span>
-          <div class="star" v-for="(item,index) in praise" :key="index" @mousemove="move(index)" @mouseleave="leave(index)" :class=" index < num  ? `star_click` :``">
-            <div class="praise" v-if="num" :class=" index != num -1 ? `hide` :``">{{item}}</div>
+          <div class="star" :class=" index < num  ? `star_click` :``" v-for="(item,index) in praise" :key="index" @mousemove="move(index)" @mouseleave="leave(index)" @click="open()">
+            <div class="praise" v-if="num" :class=" index != (num -1) ? `hide` :``">{{item}}</div>
           </div>
         </div>
         <img src="../pic/detail/write_comment.png" class="write">
-        <div class="go_comment">写短评</div>
+        <div class="go_comment" @click="write()">写短评</div>
       </div>
-      <div class="intro">
-        <div class="i">{{name}}的内容简介  ·  ·  ·  ·  ·  ·</div>
-        <div class="imore">
-          <p>电影《小丑》以同名DC漫画角色为基础，由华纳兄弟影业公司发行，计划于2019年10月4日上映。本片的故事将独立于DCEU之外，故事背景设置在20世纪80年代，讲述了一位生活陷入困境的脱口秀喜剧演员渐渐走向精神的崩溃，在哥谭市开始了疯狂的犯罪生涯，最终成为了蝙蝠侠的宿敌“小丑”的故事。</p>
-          <p>本片由《宿醉》的导演托德菲利普斯执导，他与编剧斯科特西尔弗一起撰写了编剧。杰昆菲尼克斯本片中饰演主人公“小丑”，其他的主演包括罗伯特德尼罗、莎姬贝兹、马克马龙等。</p>
-　　    </div>
-      </div>
-      <div class="pics">
-        <div class="i">{{name}}的剧照  ·  ·  ·  ·  ·  ·<span class="all">(全部图片)</span></div>
-        <img :src="item" class="pic" v-for="(item,index) in pic" :key="index">
-      </div>
+      <Comment :msg="name"/>
     </div>
+    <GiveStar v-if="show" @close="close" :star="star" :myPraise="myPraise"/>
+    <Write v-if="toWrite && $store.state.type" @closeWrite="closeWrite"/>
   </div>
 </template>
 <script>
@@ -66,23 +58,32 @@ export default {
     return{
       name: '小丑 joker',
       praise: ['很差','较差','还行','推荐','力荐'],
-      num: '',
-      point: 9,
-      pic:[
-        require('../pic/detail/joker.webp'),
-        require('../pic/detail/1.webp'),
-        require('../pic/detail/2.webp'),
-        require('../pic/detail/3.webp'),
-        require('../pic/detail/4.webp'),
-        require('../pic/detail/5.webp')
-      ],
-      ratings: [50,20,15,10,5]
+      num: null,
+      point: null,
+      every: [],
+      person: null,
+      ratings: [1,0,0,0,0],
+      show: false,
+      star: null,
+      myPraise: null,
+      toWrite: false,
     }
   },
   components: {
-    TopNav: () => import('../components/TopNav'),
+    Comment: () => import('../components/Comment'),
+    GiveStar: () => import('../components/GiveStar'),
+    Write: () => import('../components/Write'),
+    Login: () => import('../components/Login'),
   },
   created() {
+    for (let a in this.ratings) {
+      this.person += this.ratings[a];
+      this.point += this.ratings[a] * (5-a) *2 ;
+    }
+    this.point = this.point / this.person;
+    if (this.person === 0) {
+      this.point = 0;
+    }
     this.point = this.point.toFixed(1);
   },
   methods: {
@@ -90,7 +91,33 @@ export default {
       this.num = index + 1;
     },
     leave(index) {
-      this.num = '';
+      this.num = null;
+    },
+    open() {
+      if (this.$store.state.type === 2) {
+        this.show = true;
+        this.star = this.num;
+        this.myPraise = this.praise[this.num - 1];
+      } else {
+        this.$store.commit('login', 1);
+      }
+    },
+    close () {
+      this.show = false;
+    },
+    write() {
+      if (this.$store.state.type === 2) {
+        this.toWrite = true;
+        setTimeout(() => {
+          document.documentElement.scrollTop = 800;
+        }, 100);
+      } else {
+        this.toWrite = false;
+        this.$store.commit('login', 1);
+      }
+    },
+    closeWrite() {
+      // this.toWrite = false;
     }
   }
 }
@@ -136,7 +163,7 @@ export default {
         margin-left: 19px;
       }
       .score {
-        width: 200px;
+        width: 180px;
         height: 250px;
         padding-left: 45px;
         border-left: 1px solid #eee;
@@ -154,31 +181,33 @@ export default {
             font-size: 24px;
           }
           .process {
+            margin-left: 15px;
             .stars {
               width: 75px;
+              height: 15px;
+              display: flex;
+              flex-wrap: wrap;
               overflow: hidden;
-              position: relative;
-              .cover {
-                top: 0;
-                left: 0;
-                width: 75px;
-                height: 22px;
-                overflow: hidden;
-                position: absolute;
-                background-color: #fff;
-                &>img {
-                  width: 15px;
-                  height: 15px;
-                  margin-left: -7.5px;
-                }
-              }
-              .star {
+              align-items: flex-start;
+              justify-content: flex-start;
+              &>img {
                 width: 15px;
                 height: 15px;
+              }
+              .cover {
+                width: 15px;
+                height: 15px;
+                background: url('../pic/detail/halfstar.png') center / cover;
+                .grey {
+                  width: 7.5px;
+                  height: 15px;
+                  background: url('../pic/detail/star_after.png') 0px / 15px 15px;
+                }
               }
             }
             .people {
               font-size: 12px;
+              margin-top: 5px;
             }
           }
         }
@@ -193,6 +222,7 @@ export default {
             align-items: center;
             justify-content: flex-start;
             .level {
+              width: 20px;
               font-size: 12px;
             }
             .blue_line {
@@ -201,8 +231,10 @@ export default {
               background-color: #46b2fa44;
             }
             .rating_num {
+              flex: 1;
               font-size: 11px;
               margin-left: 10px;
+              text-align: end;
             }
           }
         }
@@ -253,10 +285,9 @@ export default {
         }
       }
       .write {
-        
         width: 25px;
         height: 25px;
-        margin-left: 200px;
+        margin-left: 250px;
       }
       .go_comment {
         font-size: 14px;
@@ -267,38 +298,6 @@ export default {
         line-height: 20px;
         border-radius: 3px;
         background-color: #46b2fa;
-      }
-    }
-    .intro, .pics {
-      margin-top: 20px;
-      .i {
-        font-size: 14px;
-        color: #1398f1;
-        margin-bottom: 10px;
-        .all {
-          font-size: 12px;
-          margin-left: 50px;
-        }
-        .all:hover {
-          color: #fff;
-          background-color: #1398f1;
-        }
-      }
-      .imore {
-        width: 800px;
-        font-size: 12px;
-        word-break: break-all;
-        &>p {
-          text-indent: 2em;
-          margin-block-end: 0em;
-          margin-block-start: 0em;
-        }
-      }
-      .pic {
-        width: 110px;
-        height: 110px;
-        object-fit: cover;
-        margin-right: 25px;
       }
     }
   }

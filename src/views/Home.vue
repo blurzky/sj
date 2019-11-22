@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <TopNav/>
     <Lunbo/>
     <Type/>
     <div class="top">
@@ -11,12 +10,11 @@
 <script>
 export default {
   name: 'home',
-  data() {
+  data () {
     return {
     }
   },
   components: {
-    TopNav: () => import('../components/TopNav'),
     Lunbo: () => import('../components/Lunbo'),
     Type: () => import('../components/Type'),
   },
@@ -24,6 +22,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .container {
 }

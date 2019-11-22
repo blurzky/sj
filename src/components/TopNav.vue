@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" @mousewheel.prevent>
     <div class="top">
       <div class="name">
         家庭影视
@@ -15,7 +15,7 @@
       <div class="division"></div>
       <div class="mine" v-if="user">{{user}}</div>
       <div v-if="!user" class="login_res">
-        <div class="login">登录</div>
+        <div class="login" @click="login()">登录</div>
         <div class="register">注册</div>
       </div>
       <div class="quit" v-else @click="quit()">退出</div>
@@ -25,12 +25,22 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       page: ['首页','动漫','电影','影评'],
       listShow: false,
       num: -1,
-      user: '46464643',
+      user: '',
+    }
+  },
+  computed: {
+    change() { 
+      return this.$store.state.userId;
+    }
+  },
+  watch: {
+    change(val, oldVal) {
+      this.user = val;
     }
   },
   methods: {
@@ -47,7 +57,8 @@ export default {
       this.num = -1
     },
     quit() {
-      this.user = ''
+      this.user = '';
+      this.$store.commit('login', 0);
     },
     goPage(index) {
       if(index === 0) {
@@ -56,7 +67,10 @@ export default {
       if(index === 3) {
         this.$router.push('/typePage');
       }
-    }
+    },
+    login() {
+      this.$store.commit('login', 1);
+    },
   }
 }
 </script>
@@ -139,13 +153,12 @@ export default {
     .login_res {
       display: flex;
       margin-right: 180px;
-      .login {
+      .login, .register {
         font-size: 14px;
         margin-left: 5px;
       }
-      .register {
-        font-size: 14px;
-        margin-left: 5px;
+      .login:hover, .register:hover {
+        color: #0964f7;
       }
     }
     .quit {

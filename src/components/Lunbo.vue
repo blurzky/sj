@@ -17,7 +17,7 @@
 <script>
 export default {
   data () {
-    return{
+    return {
       photo:[
         require('../pic/lunbo/xiaojie.jpg'),
         require('../pic/lunbo/batman.jpg'),
