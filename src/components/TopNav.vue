@@ -13,7 +13,10 @@
         </div>
       </div>
       <div class="division"></div>
-      <div class="mine" v-if="user">{{user}}</div>
+      <div class="mine" v-if="user" @click="$router.push('/person')" @mouseover="mineIn()" @mouseleave="mineOut()">
+        {{user}}
+        <div class="notice" v-if="mine">个人主页</div>
+      </div>
       <div v-if="!user" class="login_res">
         <div class="login" @click="login()">登录</div>
         <div class="register">注册</div>
@@ -31,6 +34,7 @@ export default {
       listShow: false,
       num: -1,
       user: '',
+      mine: false,
     }
   },
   computed: {
@@ -55,6 +59,12 @@ export default {
     },
     leave(index) {
       this.num = -1
+    },
+    mineIn() {
+      this.mine = true;
+    },
+    mineOut() {
+      this.mine = false;
     },
     quit() {
       this.user = '';
@@ -144,11 +154,22 @@ export default {
     .mine {
       font-size: 14px;
       margin-left: 5px;
-      text-decoration: underline  #fff; 
-    }
-    .mine:hover {
-      color: #0964f7;
-      text-decoration: underline  #0964f7;; 
+      position: relative;
+      text-decoration: underline  #fff;
+      .notice {
+        top: 15px;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        color: #2d98fc;
+        font-weight: 800;
+        line-height: 100px;
+        text-align: center;
+        position: absolute;
+        background: center / cover;
+        transform: translateX(-50%);
+        background-image: url('../pic/topNav/notice.png');
+      }
     }
     .login_res {
       display: flex;

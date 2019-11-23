@@ -14,6 +14,9 @@ const routes = [
   },{
     path: '/detail',
     component: () => import('../views/Detail.vue'),
+  },{
+    path: '/person',
+    component: () => import('../views/Person.vue'),
   },
 ]
 
