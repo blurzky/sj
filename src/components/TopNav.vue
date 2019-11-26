@@ -13,15 +13,12 @@
         </div>
       </div>
       <div class="division"></div>
-      <div class="mine" v-if="user" @click="$router.push('/person')" @mouseover="mineIn()" @mouseleave="mineOut()">
-        {{user}}
-        <div class="notice" v-if="mine">个人主页</div>
-      </div>
-      <div v-if="!user" class="login_res">
-        <div class="login" @click="login()">登录</div>
-        <div class="register">注册</div>
-      </div>
+      <img class="homepage" v-if="user" src="../pic/topNav/home.png"/>
+      <div class="mine" v-if="user" @click="$router.push('/person')">{{user}}</div>
+      <div v-if="!user" class="login" @click="login()">登录</div>
+      <div v-if="!user" class="register">注册</div>
       <div class="quit" v-else @click="quit()">退出</div>
+      <img class="quit_arrow" src="../pic/topNav/quit.png" v-if="user">
     </div>
   </div>
 </template>
@@ -34,7 +31,6 @@ export default {
       listShow: false,
       num: -1,
       user: '',
-      mine: false,
     }
   },
   computed: {
@@ -59,12 +55,6 @@ export default {
     },
     leave(index) {
       this.num = -1
-    },
-    mineIn() {
-      this.mine = true;
-    },
-    mineOut() {
-      this.mine = false;
     },
     quit() {
       this.user = '';
@@ -95,10 +85,10 @@ export default {
   position: fixed;
   background: #2d98fc;
   .top {
-    width: 100%;
     height: 40px;
     display: flex;
     align-items: center;
+    width: calc(100% - 200px);
     justify-content: flex-start;
     .name {
       font-size: 22px;
@@ -151,44 +141,38 @@ export default {
     .division {
       flex: 1;
     }
+    .homepage {
+      width: 20px;
+      height: 20px;
+    }
     .mine {
       font-size: 14px;
       margin-left: 5px;
-      position: relative;
+      text-align: center;
       text-decoration: underline  #fff;
-      .notice {
-        top: 15px;
-        left: 50%;
-        width: 60px;
-        height: 60px;
-        color: #2d98fc;
-        font-weight: 800;
-        line-height: 100px;
-        text-align: center;
-        position: absolute;
-        background: center / cover;
-        transform: translateX(-50%);
-        background-image: url('../pic/topNav/notice.png');
-      }
     }
-    .login_res {
-      display: flex;
-      margin-right: 180px;
-      .login, .register {
-        font-size: 14px;
-        margin-left: 5px;
-      }
-      .login:hover, .register:hover {
-        color: #0964f7;
-      }
+    .mine:hover {
+      color: #0661f5;
+      text-decoration: underline  #0661f5;
+    }
+    .login, .register {
+      font-size: 14px;
+      margin-left: 50px;
+    }
+    .login:hover, .register:hover {
+      color: #0661f5;
     }
     .quit {
       font-size: 14px;
-      margin-left: 15px;
-      margin-right: 130px;
+      margin-left: 50px;
     }
     .quit:hover {
       color: #f46464;
+    }
+    .quit_arrow {
+      width: 15px;
+      height: 15px;
+      margin-left: 5px;
     }
   }
 }

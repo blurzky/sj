@@ -17,12 +17,13 @@
           <span class="other" v-for="(item,index) in kind" :key="index" @click="change(index)" :class="num === index ? `now` : ``">{{item}}/</span>
         </div>
         <div class="content">
-          <div class="person" v-for="({username, star, date, praise, content},index) in user" :key="index">
+          <div class="person" v-for="({username, star, date, praise, content, times},index) in user" :key="index">
             <div class="title">
               <div class="username">{{username}}</div>
               <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
               <div class="date">{{date}}</div>
-              <div class="praise">{{praise}}<span class="like">有用</span></div>
+              <div class="praise">{{praise}}</div>
+              <praise :praise="praise" @praisePlus="praisePlus(index)"/>
             </div>
             <div class="brief_comment">{{content}}</div>
           </div>
@@ -52,24 +53,28 @@ export default {
           star: 5,
           date: '2019-11-20',
           praise: 50,
+          times: 0,
           content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: 'zky',
           star: 5,
           date: '2019-11-20',
           praise: 50,
+          times: 0,
           content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: 'zky',
           star: 5,
           date: '2019-11-20',
           praise: 50,
+          times: 0,
           content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: '桃桃林林 ',
           star: 4,
           date: '2019-10-03',
           praise: 30,
+          times: 0,
           content: '9分，菲尼克斯值得一座奥斯卡，表演太带情绪了，以无法抑制的狂笑表达痛苦，竟然笑到让人难过。影片与之前大部分超级英雄电影截然不同，没有特效、没有奇观、甚至没太多动作场面。而是以略复古的方式，讲小丑为什么会成为那个小丑。其实是挺严肃的一部片子，包括去关注社会问题。片子还挺邪恶的，会让你有些同情这个小丑。另外，这片应该是无法续集和衍生，因为还是太实了，如果这个角色重新漫画化，也就不再是他了。'
       }]
     }
@@ -77,7 +82,19 @@ export default {
   methods: {
     change(index) {
       this.num = index;
+    },
+    praisePlus(index) {
+      if(this.user[index].times === 0) {
+      this.user[index].praise ++;
+      this.user[index].times ++;
+      } else {
+        this.user[index].praise -= 1; 
+        this.user[index].times --;
+      }
     }
+  },
+  components: {
+    praise: () => import('./Praise'),
   }
 }
 </script>
@@ -149,6 +166,7 @@ export default {
             justify-content: flex-start;
             .username {
               color: #1398f1;
+              line-height: 14px;
               margin-right: 10px;
             }
             .username:hover {
@@ -167,21 +185,13 @@ export default {
               background-image: url('../pic/detail/star_after.png');
             }
             .date {
-              color: #6b6a6a;
+              flex: 1;
               margin: 0 10px;
+              color: #6b6a6a;
+              line-height: 14px;
             }
             .praise {
-              flex: 1;
-              text-align: end;
               color: #6b6a6a;
-              .like {
-                margin-left: 5px;
-                color: #1398f1;
-              }
-              .like:hover {
-                color: #fff;
-                background-color: #1398f1;
-              }
             }
           }
           .brief_comment {

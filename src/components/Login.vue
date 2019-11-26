@@ -1,14 +1,16 @@
 <template>
-  <div class="container" @mousewheel.prevent>
-    <div class="login">
-      <div class="back" @click="closeLogin()"></div>
-      <div class="all">
-        <input type="text" class="username" placeholder="username:" v-model="userId">
-        <input type="password" class="password" placeholder="password:">
-        <div class="submit" @click="submit()">Login</div>
+  <transition name="login" appear>
+    <div class="container" @mousewheel.prevent>
+      <div class="login">
+        <div class="back" @click="closeLogin()"></div>
+        <div class="all">
+          <input type="text" class="username" placeholder="username:" v-model="userId">
+          <input type="password" class="password" placeholder="password:">
+          <div class="submit" @click="submit()">Login</div>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 <script>
 import { timeout } from 'q';
@@ -95,5 +97,12 @@ export default {
       }
     }
   }
+}
+.login-enter, .login-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
+}
+.login-enter-active, .login-leave-active {
+  transition: all .3s ;
 }
 </style>

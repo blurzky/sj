@@ -12,7 +12,7 @@
         </div>
         <div class="content">
           <div class="movies" v-if="num === 1">
-            <div class="movie" v-for="(item,index) in 9" :key="index">
+            <div class="movie" v-for="(item,index) in 3" :key="index">
               <img src="../pic/type/joker.webp" class="photo">
               <div class="tip_saw" v-if="sawLike === 0 ">看过</div>
               <div class="tip_like" v-else>喜欢</div>
@@ -62,21 +62,21 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  margin-top: 40px;background: linear-gradient(to top, #fff,#dae4fa);
+  margin-top: 40px;
+  background: linear-gradient(to top, #fff,#dae4fa);
   .main {
     display: flex;
-    margin: 0 200px;
+    margin: 0 400px;
     padding-top: 50px;
     align-items: flex-start;
     justify-content: flex-start;
     .left {
       width: 300px;
       display: flex;
-      height: 800px;
       align-items: center;
       flex-direction: column;
       justify-content: flex-start;
-      background-color: #ffffff41;
+      background-color: #ffffff85;
       .head {
         width: 200px;
         height: 200px;
@@ -95,32 +95,33 @@ export default {
       }
     }
     .right {
-      flex: 1;
-      background-color: #ffffff1f;
       .title {
         display: flex;
         align-items: flex-start;
         justify-content: flex-start;
         .other, .now {
-          width: 20%;
+          width: 50%;
           color: #000;
           font-size: 15px;
           line-height: 40px;
           text-align: center;
+          background-color: #ffffff85;
         }
         .other {
           border: none;
-          color: #2d98fc;
+          color: #0e98f3;
+          background-color: #ffffff00;
         }
         .other:hover {
           color: #fff;
           transition: all .3s;
-          background-color: #6ab6fd;
+          background-color: #4cb1f585;
         }
       }
       .content {
-        height: 700px;
-        margin: 15px 30px;
+        width: 700px;
+        padding: 30px 30px;
+        background-color: #ffffff85;
         .comment {
           padding: 10px;
           border-top: 1px solid #cecece;
@@ -154,11 +155,11 @@ export default {
               color: #6b6a6a;
               .like {
                 margin-left: 5px;
-                color: #1398f1;
+                color: #0e98f3;
               }
               .like:hover {
                 color: #fff;
-                background-color: #1398f1;
+                background-color: #0e98f3;
               }
             }
           } 
@@ -168,12 +169,13 @@ export default {
           height: 100%;
           display: flex;
           flex-wrap: wrap;
-          overflow: scroll;
           align-items: flex-start;
-          justify-content: flex-start;
+          justify-content: space-between;
           .movie {
-            margin: 30px 20px 0 0;
-            position: relative;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: flex-start;
             .photo {
               width: 200px;
               height: 300px;
@@ -181,17 +183,15 @@ export default {
               border-radius: 15px;
             }
             .tip_saw, .tip_like {
-              left: 50%;
-              width: 60px;
-              bottom: -10px;
+              width: 100px;
+              margin: 10px 0;
               font-size: 15px;
               color: #0e98f3;
               line-height: 30px;
               border-radius: 5px;
               text-align: center;
-              position: absolute;
+              transition: all .3s;
               background-color: #fff;
-              transform: translateX(-50%);
             }
             .tip_saw:hover {
               color: #fff;

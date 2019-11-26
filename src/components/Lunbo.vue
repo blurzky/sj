@@ -73,7 +73,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   z-index: 0;
-  margin-top: 30px;
+  padding-top: 40px;
   position: relative;
   .bg {
     display: flex;
@@ -104,13 +104,12 @@ export default {
       overflow: hidden;
       position: relative;
       .wrapper {
-        height: 500px;
         display: flex;
         align-items: center;
-        justify-content: flex-start;
         transition: all .3s;
+        justify-content: flex-start;
         &>img {
-          height: 100%;
+          height: 600px;
           display: block;
           object-fit: cover;
         }

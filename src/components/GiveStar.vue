@@ -1,16 +1,18 @@
 <template>
-  <div class="container" @mousewheel.prevent>
-    <div class="bg">
-      <div class="box">
-        <div class="title">您的评价为: {{myPraise}}</div>
-        <div class="star">
-          <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
+  <transition name="alert" appear>
+    <div class="container" @mousewheel.prevent>
+      <div class="bg">
+        <div class="box">
+          <div class="title">您的评价为: {{myPraise}}</div>
+          <div class="star">
+            <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
+          </div>
+          <div class="enter" @click="close()">确定</div>
+          <img src="../pic/detail/back.png" class="back" @click="close()"/>
         </div>
-        <div class="enter" @click="close()">确定</div>
-        <img src="../pic/detail/back.png" class="back" @click="close()"/>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -88,5 +90,12 @@ export default {
       }
     }
   }
+}
+.alert-enter, .alert-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
+}
+.alert-enter-active, .alert-leave-active {
+  transition: all .3s ease;
 }
 </style>

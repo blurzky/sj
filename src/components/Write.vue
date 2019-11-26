@@ -7,7 +7,7 @@
       <button class="submit" @click="deleteWrite()">清空</button>
       <button class="submit" @click="closeWrite()">提交</button>
     </div>
-    <WriteAlert v-if="show" @closeWriteAlert="closeWriteAlert"/>
+    <WriteAlert v-if="show"/>
   </div>
 </template>
 <script>
@@ -26,6 +26,9 @@ export default {
       this.$emit("closeWrite");
       if(this.myWrite === '') {
         this.show = true;
+        setTimeout(() => {
+          this.show = false
+        },2000)
       }
       else {
         console.log(this.myWrite)
@@ -34,9 +37,6 @@ export default {
     deleteWrite() {
       this.myWrite = '';
     },
-    closeWriteAlert() {
-      this.show = false;
-    }
   }
 }
 </script>

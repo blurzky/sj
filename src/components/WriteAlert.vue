@@ -1,20 +1,16 @@
 <template>
-  <div class="container" @mousewheel.prevent @click="closeWriteAlert">
-    <div class="all" @click.stop>您还没有写短评！</div>
-  </div>
+  <transition name="alert" appear>
+    <div class="container" @mousewheel.prevent>
+      <div class="all">您还没有写短评！</div>
+    </div>
+  </transition>
 </template>
 <script>
 export default {
   data () {
     return {
-      
     }
   },
-  methods: {
-    closeWriteAlert() {
-      this.$emit("closeWriteAlert")
-    }
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -38,5 +34,12 @@ export default {
     border: 2px solid #46b2fa44;
     transform: translate(-50%,-50%);
   }
+}
+.alert-enter, .alert-leave-to {
+  opacity: 0;
+  transform: scale(1.1);
+}
+.alert-enter-active, .alert-leave-active {
+  transition: all .3s ease;
 }
 </style>
