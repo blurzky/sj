@@ -1,32 +1,26 @@
 <template>
   <div class="container">
+    <Pics v-if="picShow" @closePic="closePic" :main="main" :number="number" @right="right" @left="left"/>
     <div class="all" v-for="(item,index) in type" :key="index">
       <div class="i">{{msg}} 的{{item}}  ·  ·  ·  ·  ·  ·
-        <span class="all" v-if="index === 1">(全部图片)</span>
-        <span class="to_write" v-if="index === 2">(全部XXXX条)</span>
       </div>
       <div class="imore" v-if="index === 0">
         <p>电影《小丑》以同名DC漫画角色为基础，由华纳兄弟影业公司发行，计划于2019年10月4日上映。本片的故事将独立于DCEU之外，故事背景设置在20世纪80年代，讲述了一位生活陷入困境的脱口秀喜剧演员渐渐走向精神的崩溃，在哥谭市开始了疯狂的犯罪生涯，最终成为了蝙蝠侠的宿敌“小丑”的故事。</p>
         <p>本片由《宿醉》的导演托德菲利普斯执导，他与编剧斯科特西尔弗一起撰写了编剧。杰昆菲尼克斯本片中饰演主人公“小丑”，其他的主演包括罗伯特德尼罗、莎姬贝兹、马克马龙等。</p>
 　　   </div>
       <div class="pics" v-else-if="index === 1">
-        <img :src="item" v-for="(item) in pic" :key="item" >
+        <img :src="item" v-for="(item,index) in main" :key="index" @click="openPic(main, index)"/>
       </div>
       <div class="comment" v-else>
-        <div class="kind">
-          <span class="other" v-for="(item,index) in kind" :key="index" @click="change(index)" :class="num === index ? `now` : ``">{{item}}/</span>
-        </div>
-        <div class="content">
-          <div class="person" v-for="({username, star, date, praise, content, times},index) in user" :key="index">
-            <div class="title">
-              <div class="username">{{username}}</div>
-              <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
-              <div class="date">{{date}}</div>
-              <div class="praise">{{praise}}</div>
-              <praise :praise="praise" @praisePlus="praisePlus(index)"/>
-            </div>
-            <div class="brief_comment">{{content}}</div>
+        <div class="person" v-for="({username, star, date, praise, content, times},index) in user" :key="index">
+          <div class="title">
+            <div class="username">{{username}}</div>
+            <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
+            <div class="date">{{date}}</div>
+            <div class="praise">{{praise}}</div>
+            <praise :praise="praise" @praisePlus="praisePlus(index)"/>
           </div>
+          <div class="brief_comment">{{content}}</div>
         </div>
       </div>
     </div>
@@ -38,9 +32,9 @@ export default {
   data () {
     return {
       num: 0,
-      kind: ['热门','最新'],
+      picShow: false,
       type: ['内容简介','剧照','短评'],
-      pic: [
+      main: [
         require('../pic/detail/joker.webp'),
         require('../pic/detail/1.webp'),
         require('../pic/detail/2.webp'),
@@ -48,6 +42,7 @@ export default {
         require('../pic/detail/4.webp'),
         require('../pic/detail/5.webp')
       ],
+      number: 0,
       user:[{
           username: 'zky',
           star: 5,
@@ -80,11 +75,28 @@ export default {
     }
   },
   methods: {
+    openPic(main, index) {
+      this.number = index;
+      this.picShow = true;
+    },
+    closePic() {
+      this.picShow = false;
+    },
+    left() {
+      if( this.number > 0) {
+        this.number--;
+      }
+    },
+    right() {
+      if( this.number < 5) {
+        this.number++;
+      }
+    },
     change(index) {
       this.num = index;
     },
     praisePlus(index) {
-      if(this.user[index].times === 0) {
+      if (this.user[index].times === 0) {
       this.user[index].praise ++;
       this.user[index].times ++;
       } else {
@@ -95,6 +107,7 @@ export default {
   },
   components: {
     praise: () => import('./Praise'),
+    Pics: () => import('./Pics'),
   }
 }
 </script>
@@ -137,69 +150,49 @@ export default {
       }
     }
     .comment {
-      .kind {
-        margin: 20px 0;
-        .other {
-          font-size: 12px;
-          color: #1398f1;
-        }
-        .other:hover {
-          color: #fff;
-          background-color: #1398f1;
-        }
-        .now {
-          color: #5a5a5a;
-        }
-        .now:hover {
-          color: #5a5a5a;
-          background-color: #fff;
-        }
-      }
-      .content {
-        .person {
-          padding-top: 10px;
-          border-top: 1px solid #eeeeee;
-          .title {
-            display: flex;
-            font-size: 14px;
-            align-items: center;
-            justify-content: flex-start;
-            .username {
-              color: #1398f1;
-              line-height: 14px;
-              margin-right: 10px;
-            }
-            .username:hover {
-              color: #fff;
-              background-color: #1398f1;
-            }
-            .grey, .yellow {
-              width: 15px;
-              height: 15px;
-              background: center / cover;
-            }
-            .grey {
-              background-image: url('../pic/detail/halfstar.png');
-            }
-            .yellow {
-              background-image: url('../pic/detail/star_after.png');
-            }
-            .date {
-              flex: 1;
-              margin: 0 10px;
-              color: #6b6a6a;
-              line-height: 14px;
-            }
-            .praise {
-              color: #6b6a6a;
-            }
+      .person {
+        padding-top: 10px;
+        border-top: 1px solid #eeeeee;
+        .title {
+          display: flex;
+          font-size: 14px;
+          align-items: center;
+          justify-content: flex-start;
+          .username {
+            color: #1398f1;
+            line-height: 14px;
+            margin-right: 10px;
           }
-          .brief_comment {
-            font-size: 13px;
-            margin: 10px 0 ;
-            max-height: 68px;
-            overflow: hidden;
+          .username:hover {
+            color: #fff;
+            background-color: #1398f1;
           }
+          .grey, .yellow {
+            width: 15px;
+            height: 15px;
+            background: center / cover;
+          }
+          .grey {
+            background-image: url('../pic/detail/halfstar.png');
+          }
+          .yellow {
+            background-image: url('../pic/detail/star_after.png');
+          }
+          .date {
+            flex: 1;
+            margin: 0 10px;
+            color: #6b6a6a;
+            line-height: 14px;
+          }
+          .praise {
+            color: #6b6a6a;
+          }
+        }
+        .brief_comment {
+          font-size: 13px;
+          margin: 10px 0 ;
+          max-height: 68px;
+          overflow: hidden;
         }
       }
     }

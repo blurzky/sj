@@ -59,6 +59,7 @@ export default {
   }
   .like:hover, .liked {
     color: #fff;
+    cursor: pointer;
     background-color: #1398f1;
   }
   .plus_one, .reduce_one {

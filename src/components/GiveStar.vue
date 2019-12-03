@@ -7,8 +7,10 @@
           <div class="star">
             <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
           </div>
-          <div class="enter" @click="close()">确定</div>
-          <img src="../pic/detail/back.png" class="back" @click="close()"/>
+          <div class="action">
+            <div class="retry" @click="closeGive()">取消</div>
+            <div class="submit" @click="give()">确定</div>
+          </div>
         </div>
       </div>
     </div>
@@ -22,8 +24,12 @@ export default {
     }
   },
   methods: {
-    close() {
-      this.$emit("close")
+    give() {
+      this.$emit("give");
+      this.closeGive();
+    },
+    closeGive() {
+      this.$emit("closeGive")
     }
   }
 }
@@ -67,27 +73,34 @@ export default {
           background-image: url('../pic/detail/star_after.png');
         }
       }
-      .enter {
-        width: 100px;
-        margin: 0 auto;
-        color: #1398f1;
-        line-height: 35px;
-        text-align: center;
-        border-radius: 10px;
-        border: 1px solid #1398f1;
+      .action {
+        display: flex;
+        margin: 0 50px;
+        align-items: flex-start;
+        justify-content: space-around;
+        .submit, .retry {
+          width: 80px;
+          color: #1398f1;
+          line-height: 30px;
+          text-align: center;
+          border-radius: 8px;
+          border: 1px solid #1398f1;
+        }
+        .submit:hover, .retry:hover {
+          color: #fff;
+          cursor: pointer;
+          transition: all .3s;
+          background-color: #1398f1;
+        }
+        .retry {
+          color: #fc676e;
+          border: 1px solid #fc676e;
+        }
+        .retry:hover {
+          background-color: #fc676e;
+        }
       }
-      .enter:hover {
-        color: #fff;
-        background-color: #1398f1;
-      }
-      .back {
-        top: 0px;
-        width: 40px;
-        right: -45px;
-        height: 40px;
-        object-fit: cover;
-        position: absolute;
-      }
+      
     }
   }
 }

@@ -62,11 +62,14 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+  display: flex;
   margin-top: 40px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
   background: linear-gradient(to top, #fff,#dae4fa);
   .main {
     display: flex;
-    margin: 0 400px;
     padding-top: 50px;
     align-items: flex-start;
     justify-content: flex-start;
@@ -105,11 +108,13 @@ export default {
           font-size: 15px;
           line-height: 40px;
           text-align: center;
+          transition: all .3s;
           background-color: #ffffff85;
         }
         .other {
           border: none;
           color: #0e98f3;
+          transition: all .3s;
           background-color: #ffffff00;
         }
         .other:hover {

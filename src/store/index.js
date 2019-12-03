@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    type: 0, //0,未登录;  1,登录中;    2,已登录
+    type: 0, //0,未登录;  1,登录中;    2,已登录    3,注册
     userId: '',
   },
   mutations: {

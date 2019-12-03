@@ -6,9 +6,10 @@
         <div class="all">
           <input type="text" class="username" placeholder="用户名:" v-model="userId">
           <input type="password" class="password" placeholder="密码:" v-model="password">
-          <div class="submit" @click="submit()">登录</div>
-          <div class="goRigis" @click="goRigis">还没账号，去注册 >>></div>
+          <input type="password" class="password" placeholder="确认密码:" v-model="rePassword">
+          <div class="submit" @click="submit()">注册</div>
         </div>
+        <textarea type="text" class="brief" placeholder="个性签名:" v-model="brief"></textarea>
       </div>
     </div>
   </transition>
@@ -21,6 +22,8 @@ export default {
     return {
       userId: '',
       password: '',
+      brief: '',
+      rePassword: '',
     }
   },
   methods: {
@@ -28,35 +31,46 @@ export default {
       this.$emit("closeLogin");
     },
     submit() {
-      if (this.userId === '') {
-        alert('请输入！');
+      if (this.userId === '' || this.password === '') {
+        alert('请输入用户名或密码!');
+      } else if(this.userId.includes(' ') || this.password.includes(' ')) {
+        alert('请勿输入空格!');
+      } else if (this.password != this.rePassword) {
+        alert('两次输入密码不一致!');
       } else {
-        this.login();
+        this.rigis();
       }
     },
-    login() {
+    rigis() {
       axios({
         method: "post",
-        url:'user/login',
+        url:'user/registerUser',
+        // headers: {
+        //   post: {"Content-type": "application/x-www-form-urlencoded"}
+        // },
         data: {
           name: this.userId,
           pwd: this.password,
+          brief: this.brief,
         },
+        transformRequest: [
+          function(data) {
+            let ret = "";
+            for (let it in data) {
+              ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+            }
+            return ret;
+          }
+        ]
       }).then(({ data }) => {
         if(data.status === 200) {
-          console.log(data);
-          this.$store.commit('getUserId', this.userId);
-          this.$store.commit('login', 2);
-          this.closeLogin();
+          this.$store.commit('login', 1);
         } else {
-          alert(data.message)
+          alert(data.message);
         }
       }).catch(error => {
         console.log(error);
       });
-    },
-    goRigis() {
-      this.$store.commit('login', 3);
     }
   }
 }
@@ -80,6 +94,9 @@ export default {
     background-color: #fff;
     border: 8px solid #b8b8b8;
     transform: translate(-50%,-50%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     .back {
       top: 10px;
       right: 10px;
@@ -99,13 +116,12 @@ export default {
       flex-direction: column;
       justify-content: flex-start;
       .username, .password {
-        width: 200px;
-        margin-top: 60px;
-        outline: none;
-        font-size: 16px;
+        width: 180px;
         padding: 10px;
+        outline: none;
+        margin-bottom: 40px;
         border-radius: 5px;
-        border: 2px solid #b8b8b8;
+        border: 1px solid #b8b8b8;
       }
       .submit {
         width: 160px;
@@ -113,7 +129,6 @@ export default {
         line-height: 40px;
         text-align: center;
         border-radius: 5px;
-        margin: 60px 0 60px 0;
         border: 2px solid #2d98fc;
       }
       .submit:hover {
@@ -121,17 +136,13 @@ export default {
         transition: all .3s;
         background-color: #2d98fc;
       }
-      .goRigis {
-        padding: 0 5px;
-        font-size: 13px;
-        text-align: end;
-        color: #2d98fc;
-      }
-      .goRigis:hover {
-        color: #fff;
-        transition: all .3s;
-        background-color: #2d98fc;
-      }
+    }
+    .brief {
+      width: 220px;
+      outline: none;
+      height: 280px;
+      border-radius: 5px;
+      margin-right: 50px;
     }
   }
 }

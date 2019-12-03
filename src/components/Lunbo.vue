@@ -77,6 +77,7 @@ export default {
   position: relative;
   .bg {
     display: flex;
+    padding-top: 5px;
     align-items: center;
     justify-content: center;
     background: linear-gradient(to top, #fff 10%, #7dbcf7 80%);
@@ -123,6 +124,7 @@ export default {
         .white {
           width: 15px;
           height: 15px;
+          cursor: pointer;
           margin-left: 25px;
           background-size: 100%;
           background-repeat: no-repeat;

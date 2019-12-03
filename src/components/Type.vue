@@ -124,6 +124,7 @@ export default {
         margin-left: 10px;
       }
       .detail:hover {
+        cursor: pointer;
         color: #7dbcf5;
       }
     }

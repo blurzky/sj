@@ -31,7 +31,7 @@ export default {
     position: absolute;
     border-radius: 10px;
     background-color: #fff;
-    border: 2px solid #46b2fa44;
+    border: 2px solid #46b2fa;
     transform: translate(-50%,-50%);
   }
 }

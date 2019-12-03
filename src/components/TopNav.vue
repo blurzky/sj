@@ -14,9 +14,10 @@
       </div>
       <div class="division"></div>
       <img class="homepage" v-if="user" src="../pic/topNav/home.png"/>
+      <div class="admin" @click="$router.push('/admin')">管理员页面</div>
       <div class="mine" v-if="user" @click="$router.push('/person')">{{user}}</div>
       <div v-if="!user" class="login" @click="login()">登录</div>
-      <div v-if="!user" class="register">注册</div>
+      <div v-if="!user" class="register" @click="register()">注册</div>
       <div class="quit" v-else @click="quit()">退出</div>
       <img class="quit_arrow" src="../pic/topNav/quit.png" v-if="user">
     </div>
@@ -59,6 +60,7 @@ export default {
     quit() {
       this.user = '';
       this.$store.commit('login', 0);
+      this.$router.push('/');
     },
     goPage(index) {
       if(index === 0) {
@@ -71,6 +73,9 @@ export default {
     login() {
       this.$store.commit('login', 1);
     },
+    register() {
+      this.$store.commit('login', 3);
+    }
   }
 }
 </script>
@@ -97,11 +102,10 @@ export default {
       margin-right: 30px;
     }
     .choise {
-      width: 80px;
       display: flex;
       font-size: 17px;
+      cursor: pointer;
       line-height: 40px;
-      position: relative;
       align-items: center;
       justify-content: flex-start;
       .enter {
@@ -116,10 +120,8 @@ export default {
         transition: transform .3s;
       }
       .list {
-        top: 0;
-        left: 80px;
         display: flex;
-        position: absolute;
+        margin-left: 10px;
         align-items: flex-start;
         justify-content: flex-start;
         background-color: #2d98fc62;
@@ -132,9 +134,10 @@ export default {
         }
         .active {
           border-radius: 5px;
-          transform: scale(1.1);
+          transform: scaleX(1.1);
           transition: transform .4s;
           background-color: #8cc4f8;
+          border-right: 1px solid #8cc4f8;
         }
       }
     }
@@ -145,6 +148,18 @@ export default {
       width: 20px;
       height: 20px;
     }
+    .admin {
+      padding: 0 5px;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+    .admin:hover {
+      cursor: pointer;
+      color: #0661f5;
+      transition: all .6s;
+      transform: scale(1.1);
+      background-color: #fff;
+    }
     .mine {
       font-size: 14px;
       margin-left: 5px;
@@ -152,7 +167,9 @@ export default {
       text-decoration: underline  #fff;
     }
     .mine:hover {
+      cursor: pointer;
       color: #0661f5;
+      transition: all .4s;
       text-decoration: underline  #0661f5;
     }
     .login, .register {
@@ -160,14 +177,18 @@ export default {
       margin-left: 50px;
     }
     .login:hover, .register:hover {
+      cursor: pointer;
       color: #0661f5;
+      transition: all .3s;
     }
     .quit {
       font-size: 14px;
       margin-left: 50px;
     }
     .quit:hover {
+      cursor: pointer;
       color: #f46464;
+      transition: all .3s;
     }
     .quit_arrow {
       width: 15px;

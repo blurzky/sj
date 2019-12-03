@@ -2,6 +2,7 @@
   <div id="app">
     <TopNav/>
     <Login v-if="$store.state.type === 1" @closeLogin="closeLogin"/>
+    <Rigister v-if="$store.state.type === 3" @closeLogin="closeLogin"/>
     <router-view/>
   </div>
 </template>
@@ -15,6 +16,7 @@ export default {
   components: {
     TopNav: () => import('./components/TopNav'),
     Login: () => import('./components/Login'),
+    Rigister: () => import('./components/Rigister'),
   },
   methods: {
     closeLogin () {

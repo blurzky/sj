@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <Pics v-if="picShow" @closePic="closePic" :main="main" :number="number"/>
     <div class="top">
       <div class="title">
         <span class="name">{{name}}</span>
@@ -8,7 +9,7 @@
     </div>
     <div class="mid">
       <div class="basic">
-        <img src="../pic/type/joker.webp" class="mainpic">
+        <img :src="main" class="mainpic" @click="openPic(main)">
         <div class="info"></div>
         <div class="score">
           <span>综合评分</span>
@@ -22,7 +23,7 @@
                 </div>
                 <img src="../pic/detail/halfstar.png" v-for="(item) in [6, 7, 8, 9, 10]" :key="item">
               </div>
-              <div class="people">{{person}}人评价</div>
+              <div class="people">{{person}}人评分</div>
             </div>
           </div>
           <div class="ratings">
@@ -35,8 +36,9 @@
         </div>
       </div>
       <div class="see_star">
-        <div class="see">想看</div>
-        <div class="saw">喜欢</div>
+        <div class="see" @click="see">想看</div>
+        <div class="like" @click="like">喜欢</div>
+        <div class="rePraise" @click="rePraise" v-if="times === 1">重评</div>
         <div class="appraise">
           <span>评价：</span>
           <div class="star" :class=" index < num  ? `star_click` :``" v-for="(item,index) in praise" :key="index" @mousemove="move(index)" @mouseleave="leave(index)" @click="open()">
@@ -48,7 +50,7 @@
       </div>
       <Comment :msg="name"/>
     </div>
-    <GiveStar v-if="show" @close="close" :star="star" :myPraise="myPraise"/>
+    <GiveStar v-if="show" @closeGive="closeGive" :star="star" :myPraise="myPraise" @give="give"/>
     <Write v-if="toWrite && $store.state.type" @closeWrite="closeWrite"/>
   </div>
 </template>
@@ -59,14 +61,18 @@ export default {
       name: '小丑 joker',
       praise: ['很差','较差','还行','推荐','力荐'],
       num: null,
+      times: 0,
+      star: null,
       point: null,
       every: [],
       person: null,
       ratings: [1,0,0,0,0],
       show: false,
-      star: null,
       myPraise: null,
       toWrite: false,
+      picShow: false,
+      main: [require('../pic/type/joker.webp')],
+      number: 0,
     }
   },
   components: {
@@ -74,6 +80,7 @@ export default {
     GiveStar: () => import('../components/GiveStar'),
     Write: () => import('../components/Write'),
     Login: () => import('../components/Login'),
+    Pics: () => import('../components/Pics'),
   },
   created() {
     for (let a in this.ratings) {
@@ -87,22 +94,38 @@ export default {
     this.point = this.point.toFixed(1);
   },
   methods: {
+    openPic(main) {
+      this.picShow = true;
+    },
+    closePic() {
+      this.picShow = false;
+    },
     move(index) {
-      this.num = index + 1;
-    },
-    leave(index) {
-      this.num = null;
-    },
-    open() {
-      if (this.$store.state.type === 2) {
-        this.show = true;
-        this.star = this.num;
-        this.myPraise = this.praise[this.num - 1];
-      } else {
-        this.$store.commit('login', 1);
+      if (this.times === 0) {
+        this.num = index + 1;
       }
     },
-    close () {
+    leave(index) {
+      if (this.times === 0) {
+        this.num = null;
+      }
+    },
+    open() {
+      if (this.times === 0) {
+        if (this.$store.state.type === 2) {
+          this.show = true;
+          this.star = this.num;
+          this.myPraise = this.praise[this.num - 1];
+        } else {
+          this.$store.commit('login', 1);
+        }
+      }
+    },
+    give() {
+      this.num = this.star;
+      this.times += 1;
+    },
+    closeGive () {
       this.show = false;
     },
     write() {
@@ -117,7 +140,23 @@ export default {
       }
     },
     closeWrite() {
-      // this.toWrite = false;
+      this.toWrite = false;
+    },
+    see () {
+      if (this.$store.state.userId === '') {
+        this.$store.state.type = 1;
+      }
+    },
+    like() {
+      if (this.$store.state.userId === '') {
+        this.$store.state.type = 1;
+      }
+    },
+    rePraise() {
+      if (this.star != 0) {;
+        this.times = 0;
+        this.num = 0;
+      }
     }
   }
 }
@@ -245,7 +284,7 @@ export default {
       margin-top: 20px;
       align-items: center;
       justify-content: flex-start;
-      .see, .saw{
+      .see, .like, .rePraise{
         width: 40px;
         font-size: 12px;
         line-height: 20px;
@@ -255,8 +294,15 @@ export default {
         border: 1px solid #cecece;
         background-color: #46b2fa44;
       }
-      .see:hover, .saw:hover {
+      .see:hover, .like:hover, .rePraise:hover {
+        cursor: pointer;
         color: #46b2fa;
+      }
+      .rePraise {
+        background-color: #fc676e44;
+      }
+      .rePraise:hover {
+        color: #fc676e;
       }
       .appraise {
         display: flex;
@@ -268,6 +314,7 @@ export default {
         .star {
           width: 15px;
           height: 15px;
+          cursor: pointer;
           margin-left: 1px;
           background-size: cover;
           background-image: url('../pic/detail/star_before.png');
@@ -292,6 +339,7 @@ export default {
       .go_comment {
         font-size: 14px;
         color: #46b2fa;
+        cursor: pointer;
       }
       .go_comment:hover {
         color: #fff;
