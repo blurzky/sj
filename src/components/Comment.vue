@@ -1,18 +1,15 @@
 <template>
   <div class="container">
-    <Pics v-if="picShow" @closePic="closePic" :main="main" :number="number" @right="right" @left="left"/>
+    <Pics v-if="picShow" @closePic="closePic" :main="main" :photoNumber="photoNumber" @right="right" @left="left"/>
     <div class="all" v-for="(item,index) in type" :key="index">
       <div class="i">{{msg}} 的{{item}}  ·  ·  ·  ·  ·  ·
       </div>
-      <div class="imore" v-if="index === 0">
-        <p>电影《小丑》以同名DC漫画角色为基础，由华纳兄弟影业公司发行，计划于2019年10月4日上映。本片的故事将独立于DCEU之外，故事背景设置在20世纪80年代，讲述了一位生活陷入困境的脱口秀喜剧演员渐渐走向精神的崩溃，在哥谭市开始了疯狂的犯罪生涯，最终成为了蝙蝠侠的宿敌“小丑”的故事。</p>
-        <p>本片由《宿醉》的导演托德菲利普斯执导，他与编剧斯科特西尔弗一起撰写了编剧。杰昆菲尼克斯本片中饰演主人公“小丑”，其他的主演包括罗伯特德尼罗、莎姬贝兹、马克马龙等。</p>
-　　   </div>
+      <div class="imore" v-if="index === 0">{{content}}</div>
       <div class="pics" v-else-if="index === 1">
-        <img :src="item" v-for="(item,index) in main" :key="index" @click="openPic(main, index)"/>
+        <img :src="item" v-for="(item,index) in main" :key="index" @click="openPic(index)"/>
       </div>
       <div class="comment" v-else>
-        <div class="person" v-for="({username, star, date, praise, content, times},index) in user" :key="index">
+        <div class="person" v-for="({username, star, date, praise, text, times},index) in user" :key="index">
           <div class="title">
             <div class="username">{{username}}</div>
             <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
@@ -20,7 +17,7 @@
             <div class="praise">{{praise}}</div>
             <praise :praise="praise" @praisePlus="praisePlus(index)"/>
           </div>
-          <div class="brief_comment">{{content}}</div>
+          <div class="brief_comment">{{text}}</div>
         </div>
       </div>
     </div>
@@ -28,72 +25,65 @@
 </template>
 <script>
 export default {
-  props: ['msg'],
+  props: ['msg','photos','content'],
   data () {
     return {
       num: 0,
       picShow: false,
       type: ['内容简介','剧照','短评'],
-      main: [
-        require('../pic/detail/joker.webp'),
-        require('../pic/detail/1.webp'),
-        require('../pic/detail/2.webp'),
-        require('../pic/detail/3.webp'),
-        require('../pic/detail/4.webp'),
-        require('../pic/detail/5.webp')
-      ],
-      number: 0,
+      photoNumber: 0,
+      main: [],
       user:[{
           username: 'zky',
           star: 5,
           date: '2019-11-20',
           praise: 50,
           times: 0,
-          content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
+          text: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: 'zky',
           star: 5,
           date: '2019-11-20',
           praise: 50,
           times: 0,
-          content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
+          text: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: 'zky',
           star: 5,
           date: '2019-11-20',
           praise: 50,
           times: 0,
-          content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
+          text: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
         },{
           username: '桃桃林林 ',
           star: 4,
           date: '2019-10-03',
           praise: 30,
           times: 0,
-          content: '9分，菲尼克斯值得一座奥斯卡，表演太带情绪了，以无法抑制的狂笑表达痛苦，竟然笑到让人难过。影片与之前大部分超级英雄电影截然不同，没有特效、没有奇观、甚至没太多动作场面。而是以略复古的方式，讲小丑为什么会成为那个小丑。其实是挺严肃的一部片子，包括去关注社会问题。片子还挺邪恶的，会让你有些同情这个小丑。另外，这片应该是无法续集和衍生，因为还是太实了，如果这个角色重新漫画化，也就不再是他了。'
+          text: '9分，菲尼克斯值得一座奥斯卡，表演太带情绪了，以无法抑制的狂笑表达痛苦，竟然笑到让人难过。影片与之前大部分超级英雄电影截然不同，没有特效、没有奇观、甚至没太多动作场面。而是以略复古的方式，讲小丑为什么会成为那个小丑。其实是挺严肃的一部片子，包括去关注社会问题。片子还挺邪恶的，会让你有些同情这个小丑。另外，这片应该是无法续集和衍生，因为还是太实了，如果这个角色重新漫画化，也就不再是他了。'
       }]
     }
   },
+  created() {
+    this.main = this.photos;
+  },
   methods: {
-    openPic(main, index) {
-      this.number = index;
+    openPic(index) {
+      this.photoNumber = index;
       this.picShow = true;
     },
     closePic() {
       this.picShow = false;
     },
     left() {
-      if( this.number > 0) {
-        this.number--;
+      if( this.photoNumber > 0) {
+        this.photoNumber--;
       }
     },
     right() {
-      if( this.number < 5) {
-        this.number++;
+      if( this.photoNumber < 5) {
+        this.photoNumber++;
       }
-    },
-    change(index) {
-      this.num = index;
     },
     praisePlus(index) {
       if (this.user[index].times === 0) {
@@ -146,6 +136,7 @@ export default {
         width: 110px;
         height: 110px;
         display: block;
+        cursor: pointer;
         object-fit: cover;
       }
     }

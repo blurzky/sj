@@ -21,6 +21,7 @@ export default {
     return {
       userId: '',
       password: '',
+      user: {},
     }
   },
   methods: {
@@ -42,21 +43,20 @@ export default {
           name: this.userId,
           pwd: this.password,
         },
-      }).then(({ data }) => {
-        if(data.status === 200) {
-          console.log(data);
-          this.$store.commit('getUserId', this.userId);
-          this.$store.commit('login', 2);
+      }).then(({ data:{data: {brief, name, userid}, message, status} }) => {
+        if(status === 200) {
+          this.user = {userid, name} 
+          this.$store.commit('getUserId', this.user);
           this.closeLogin();
         } else {
-          alert(data.message)
+          alert(message)
         }
       }).catch(error => {
         console.log(error);
       });
     },
     goRigis() {
-      this.$store.commit('login', 3);
+      this.$store.commit('login', 2);
     }
   }
 }
@@ -128,9 +128,8 @@ export default {
         color: #2d98fc;
       }
       .goRigis:hover {
-        color: #fff;
-        transition: all .3s;
-        background-color: #2d98fc;
+        cursor: pointer;
+        text-decoration: underline #2d98fc;
       }
     }
   }

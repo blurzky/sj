@@ -13,8 +13,8 @@
         </div>
       </div>
       <div class="division"></div>
-      <img class="homepage" v-if="user" src="../pic/topNav/home.png"/>
-      <div class="admin" @click="$router.push('/admin')">管理员页面</div>
+      <img class="homepage" v-if="user != 'zky' && user" src="../pic/topNav/home.png"/>
+      <a class="admin" v-if="user === 'zky'" href='http://192.168.5.52:9528/'>管理员</a>
       <div class="mine" v-if="user" @click="$router.push('/person')">{{user}}</div>
       <div v-if="!user" class="login" @click="login()">登录</div>
       <div v-if="!user" class="register" @click="register()">注册</div>
@@ -31,7 +31,7 @@ export default {
       page: ['首页','动漫','电影','影评'],
       listShow: false,
       num: -1,
-      user: '',
+      user: this.$store.state.userId,
     }
   },
   computed: {
@@ -59,7 +59,7 @@ export default {
     },
     quit() {
       this.user = '';
-      this.$store.commit('login', 0);
+      this.$store.commit('getUserId', {});
       this.$router.push('/');
     },
     goPage(index) {
@@ -74,7 +74,7 @@ export default {
       this.$store.commit('login', 1);
     },
     register() {
-      this.$store.commit('login', 3);
+      this.$store.commit('login', 2);
     }
   }
 }
@@ -162,7 +162,7 @@ export default {
     }
     .mine {
       font-size: 14px;
-      margin-left: 5px;
+      margin-left: 10px;
       text-align: center;
       text-decoration: underline  #fff;
     }

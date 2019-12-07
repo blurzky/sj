@@ -1,9 +1,9 @@
 <template>
   <transition name="pics" appear>
-    <div class="container" @mousewheel.prevent @click="closePic" :style="{height: `${height}px`}">
+    <div class="container" @mousewheel.prevent @click="closePic" :style="{height: `${height}px`, width: `${width}px`}">
       <div class="pic">
         <img class="left_arrow" src="../pic/lunbo/左箭头.png" @click.stop @click="left" v-if="main.length != 1">
-        <img class="picture" :src="main[number]"/>
+        <img :class="main.length == 1 ? 'mainPicture' : 'picture'" :src="main[photoNumber]"/>
         <img class="right_arrow" src="../pic/lunbo/右箭头.png" @click.stop @click="right" v-if="main.length != 1">
       </div>
     </div>
@@ -12,16 +12,56 @@
 
 <script>
 export default {
-  props: ['main','number'],
+  props: ['main','photoNumber'],
   data() {
     return {
       height: '',
     }
   },
   created() {
-    this.height = document.documentElement.clientHeight;
+    this.screen();
+    this.height = window.screen.height;
+    this.width = window.screen.availWidth;
+  },
+  mounted() {
+    document.addEventListener("fullscreenchange", this.quit , false);
   },
   methods: {
+    quit() {
+      if (document.fullscreenElement) {
+        console.log('进入全屏')
+      } else {
+        this.$emit('closePic');
+        document.removeEventListener("fullscreenchange", this.quit);
+        console.log('退出全屏');
+      }
+    },
+    screen(){
+      let element = document.documentElement;
+      if (this.fullscreen) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      } else {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullScreen) {
+          element.webkitRequestFullScreen();
+        } else if (element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+          // IE11
+          element.msRequestFullscreen();
+        } 
+      }
+      this.fullscreen = !this.fullscreen;
+    },
     left() {
       this.$emit('left')
     },
@@ -29,6 +69,7 @@ export default {
       this.$emit('right')
     },
     closePic() {
+      this.screen();
       this.$emit('closePic');
     },
   },
@@ -44,25 +85,34 @@ export default {
   left: 0;
   z-index: 20;
   width: 100%;
+  display: flex;
   position: fixed;
-  background-color: #000000d8;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
   .pic {
+    width: calc(100% - 200px);
     height: 100%;
     display: flex;
-    margin: 0 150px;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     .left_arrow, .right_arrow {
+      width: 50px;
       height: 50px;
     }
     .left_arrow:hover, .right_arrow:hover {
-      transform: scale(1.2);
       transition: all .2s;
+      transform: scale(1.2);
+    }
+    .mainPicture {
+      width:100%;
+      height: 100%;
+      object-fit: contain;
     }
     .picture {
       height: 100%;
-      margin: 0 150px;
       object-fit: contain;
+      width: calc(100% - 300px);
     }
   }
 }

@@ -94,7 +94,7 @@ export default {
           width: 150px;
           font-size: 15px;
           overflow: hidden;
-          margin-left: 10px;
+          margin-left: 5px;
           text-overflow: ellipsis;
         }
         .point {
@@ -102,7 +102,7 @@ export default {
           text-align: end;
           font-size: 16px;
           color: #F45454;
-          margin-right: 10px;
+          margin-right: 5px;
         }
       }
     }

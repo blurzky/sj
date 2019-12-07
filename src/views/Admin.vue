@@ -1,8 +1,12 @@
 <template>
   <div class="container">
     <div class="top">
-      <img src="../pic/admin/back.png" class="back" @click="$router.go(-1)">
-      后台管理系统
+      <img src="../pic/admin/back.png" class="back" @click="$router.go(-1)">后台管理系统
+    </div>
+    <div class="mid">
+      <div class="left">
+        
+      </div>
     </div>
   </div>
 </template>

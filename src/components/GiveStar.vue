@@ -26,7 +26,6 @@ export default {
   methods: {
     give() {
       this.$emit("give");
-      this.closeGive();
     },
     closeGive() {
       this.$emit("closeGive")

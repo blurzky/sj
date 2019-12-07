@@ -5,18 +5,24 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    type: 0, //0,未登录;  1,登录中;    2,已登录    3,注册
-    userId: '',
+    type: 0, //0,不显示;  1,登录;   2,注册
+    userId: localStorage.getItem('userName'),
+    userIdCode: localStorage.getItem('userId'),
   },
   mutations: {
     login(state, type) {
       state.type = type;
-      if (type === 0) {
-        state.userId = '';
-      }
     },
-    getUserId(state, userId) {
-      state.userId = userId;
+    getUserId(state, user) {
+      state.userId = user.name;
+      state.userIdCode = user.userid;
+      if (state.userId) {
+        localStorage.setItem('userName', user.name);
+        localStorage.setItem('userId', user.userid);
+      } else {
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userId');
+      }
     }
   },
 })

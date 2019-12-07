@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="banner">
     <div class="bg">
       <div class="arrow" @click="moveLeft(),stopPlay()"></div>
       <div class="cover" :style="{width: `${width}px`}">
-        <div class="wrapper" :style="{width: `${width * photo.length}px`, transform: `translateX(${-num * width}px)`}">
-          <img :src="item" v-for="(item,index) in photo" :key="index" :style="{width: `${width}px`}"/>
+        <div class="wrapper" :style="{width: `${width * banner.length}px`, transform: `translateX(${-num * width}px)`}">
+          <img :src="item.picture" v-for="(item,index) in banner" :key="index" :style="{width: `${width}px`}" @click="goDetail(item.id)"/>
         </div>
         <div class="list">
-          <div class="white" v-for="(item,index) in photo.length-2" :key="index" :class="num === index+1 ? `blue` : ''" @click="change(index)"></div>
+          <div class="white" v-for="(item,index) in banner.length" :key="index" :class="num === index ? `blue` : ''" @click="change(index)"></div>
         </div>
       </div>
       <div class="arrow2" @click="moveRight(),stopPlay()"></div>
@@ -16,17 +16,9 @@
 </template>
 <script>
 export default {
+  props: ['banner'],
   data () {
     return {
-      photo:[
-        require('../pic/lunbo/xiaojie.jpg'),
-        require('../pic/lunbo/batman.jpg'),
-        require('../pic/lunbo/jian10.jpg'),
-        require('../pic/lunbo/meg.jpg'),
-        require('../pic/lunbo/meidui.jpg'),
-        require('../pic/lunbo/muguang.jpg'),
-        require('../pic/lunbo/zhuluoji.jpg'),
-      ],
       width: '',
       num: 1,
       timer: '',
@@ -36,28 +28,29 @@ export default {
     this.width = document.body.clientWidth - 600;
   },
   mounted() {
-    this.photo.unshift(this.photo[this.photo.length - 1]);
-    this.photo.push(this.photo[1]);
-    this.autoplay()
+    this.autoplay();
   },
   methods: {
+    goDetail(id) {
+      this.$router.push(`/detail?movie=${id}`);
+    },
     moveRight() {
       this.num ++;
-      if(this.num > this.photo.length - 2) {
-        this.num = 1;
+      if(this.num > this.banner.length - 1) {
+        this.num = 0;
       }
     },
     moveLeft() {
       this.num --;
-      if(this.num < 1) {
-        this.num = this.photo.length - 2
+      if(this.num < 0) {
+        this.num = this.banner.length -1
       }
     },
     autoplay() {
       this.timer = setTimeout(() => {
         this.moveRight();
         this.autoplay();
-      },5000)
+      },3000)
     },
     stopPlay() {
       clearTimeout(this.timer);
@@ -65,7 +58,7 @@ export default {
     },
     change(index) {
       this.stopPlay();
-      this.num = index + 1;
+      this.num = index;
     }
   }
 }

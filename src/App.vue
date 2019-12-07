@@ -2,7 +2,7 @@
   <div id="app">
     <TopNav/>
     <Login v-if="$store.state.type === 1" @closeLogin="closeLogin"/>
-    <Rigister v-if="$store.state.type === 3" @closeLogin="closeLogin"/>
+    <Rigister v-if="$store.state.type === 2" @closeLogin="closeLogin"/>
     <router-view/>
   </div>
 </template>
@@ -20,11 +20,7 @@ export default {
   },
   methods: {
     closeLogin () {
-      if (this.$store.state.userId != '') {
-        this.$store.commit('login', 2);
-      } else {
-        this.$store.commit('login', 0);
-      }
+      this.$store.commit('login', 0);
     }
   }
 }
