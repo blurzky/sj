@@ -1,9 +1,7 @@
 <template>
   <div class="container" @mousewheel.prevent>
     <div class="top">
-      <div class="name">
-        家庭影视
-      </div>
+      <div class="name" @click="$router.push('/')">家庭影视</div>
       <div class="choise" @mouseover="mouseOver" @mouseleave="mouseLeave">
         <img src="../pic/topNav/九宫格.png" class="enter">
         导航
@@ -67,7 +65,7 @@ export default {
         this.$router.push('/'); 
       }
       if(index === 3) {
-        this.$router.push('/typePage');
+        this.$router.push('/typePage?index=2');
       }
     },
     login() {
@@ -100,6 +98,9 @@ export default {
       margin-left: 10%;
       line-height: 24px;
       margin-right: 30px;
+    }
+    .name:hover {
+      cursor: pointer;
     }
     .choise {
       display: flex;
@@ -152,6 +153,9 @@ export default {
       padding: 0 5px;
       font-size: 14px;
       border-radius: 5px;
+    }
+    .admin:visited {
+      color: #fff;
     }
     .admin:hover {
       cursor: pointer;

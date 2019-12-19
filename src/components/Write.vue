@@ -7,7 +7,7 @@
       <button class="submit" @click="deleteWrite()">清空</button>
       <button class="submit" @click="closeWrite()">提交</button>
     </div>
-    <WriteAlert v-if="alert"/>
+    <Alert message="您还没有写短评!" v-if="alert"/>
     <WriteSubmit v-if="submit" @closeSubmit="closeSubmit" @postSubmit="postSubmit"/>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
     }
   },
   components: {
-    WriteAlert: () => import('./WriteAlert'),
+    Alert: () => import('./Alert'),
     WriteSubmit: () => import('./WriteSubmit'),
   },
   methods: {
@@ -40,8 +40,8 @@ export default {
       this.myWrite = '';
     },
     postSubmit() {
+      this.$emit("postSubmit", this.myWrite);
       this.$emit("closeWrite");
-      console.log(this.myWrite)
     },
     closeSubmit() {
       this.submit = false
@@ -57,8 +57,12 @@ export default {
     .content {
       width: 800px;
       height: 100px;
+      outline: none;
       font-size: 14px;
       border-radius: 5px;
+    }
+    .content:hover {
+      border: 1px solid #43b1f0
     }
   }
   .action {

@@ -9,7 +9,7 @@
     </div>
     <div class="mid">
       <div class="basic">
-        <img :src="main" class="mainpic" @click="openPic">
+        <img :src="main" class="mainpic" @click="openPic" title="点击查看封面海报">
         <div class="info"></div>
         <div class="score">
           <span>综合评分</span>
@@ -36,9 +36,10 @@
         </div>
       </div>
       <div class="see_star">
-        <div class="see" @click="see">想看</div>
-        <div class="like" @click="like">喜欢</div>
-        <div class="rePraise" @click="rePraise" v-if="myScore">重评</div>
+        <div class="see" @click="addMine(e = 0)" title="添加到我想看的">想看</div>
+        <div class="like" @click="addMine(e = 1)" title="添加到我喜欢的">喜欢</div>
+        <Alert :message="message" v-if="alert"/>
+        <div class="rePraise" @click="rePraise" v-if="myScore" title="重新评分点此">重评</div>
         <div class="appraise">
           <span>评分：</span>
           <div class="star" :class=" index < num  ? `star_click` :``" v-for="(item,index) in praise" :key="index" @mousemove="move(index)" @mouseleave="leave(index)" @click="open">
@@ -53,10 +54,12 @@
         :msg="data.title"
         :photos="data.photos"
         :content="data.content"
+        :myScore="data.myScore"
+        :userComment="userComment"
       />
     </div>
     <GiveStar v-if="show" @closeGive="closeGive" :star="star" :myPraise="myPraise" @give="give"/>
-    <Write v-if="toWrite" @closeWrite="closeWrite"/>
+    <Write v-if="toWrite" @closeWrite="closeWrite" @postSubmit="postSubmit"/>
   </div>
 </template>
 <script>
@@ -69,15 +72,20 @@ export default {
       star: null, //点击进入的星星数量
       myScore: null, //我打的分
       point: null, //总分
-      person: null,
-      ratings: [],
-      show: false,
-      myPraise: null,
-      toWrite: false,
-      picShow: false,
-      photoNumber: 0,
+      person: null, //总人数
+      ratings: [],  //每种评分的人数
+      show: false,  //评分界面是否显示
+      myPraise: null, //我打的分
+      toWrite: false, //去写评论
+      picShow: false, //点开图片
+      photoNumber: 0, //大图图片索引
       data: {},
-      main: [],
+      main: [], //大图
+      // systemDate: '', //系统时间
+      comment: '',
+      userComment: [],
+      message: '', //喜欢想看提示界面
+      alert: false, //喜欢想看提示界面
     }
   },
   components: {
@@ -86,28 +94,57 @@ export default {
     Write: () => import('../components/Write'),
     Login: () => import('../components/Login'),
     Pics: () => import('../components/Pics'),
+    Alert: () => import('../components/Alert'),
   },
   created() {
     this.getMovie();
+    this.getWrite();
   },
   methods: {
     openPic() { //全屏看图
       this.picShow = true;
     },
-    closePic() {
+    closePic() { //关闭全屏
       this.picShow = false;
     },
-    move(index) {
+    addMine (e) {
+      if (this.$store.state.userId) {
+        if(!this.$store.state.saw.includes(this.data.cover) && !this.$store.state.like.includes(this.data.cover)) {
+          if(e === 0) {  //想看
+            this.message = '已添加到您想看的~';
+            this.$store.commit('add',{e , cover: this.data.cover});
+          } else {   //喜欢
+            this.message = '已添加到您喜欢的~';
+            this.$store.commit('add',{e , cover: this.data.cover});
+          }
+        } else {
+          this.message = '您已添加过了'
+        }
+        this.alert = true;
+        setTimeout(() => {
+          this.alert = false
+        },1500)
+      } else {
+        this.$store.state.type = 1;
+      }
+    },
+    rePraise() { //重评
+      if (this.myScore) {
+        this.myScore = 0;
+        this.num = 0;
+      }
+    },
+    move(index) { //移入打分
       if (!this.myScore) {
         this.num = index + 1;
       }
     },
-    leave(index) {
+    leave(index) { //移出打分
       if (!this.myScore) {
         this.num = null;
       }
     },
-    open() { //评分
+    open() { //打开评分界面
       if (!this.myScore) {
         if (this.$store.state.userId) {
           this.show = true;
@@ -118,13 +155,10 @@ export default {
         }
       }
     },
-    give() {
+    give() { //打分
       axios({
         method: "post",
         url:'content/score',
-        // headers: {
-        //   post: {"Content-type": "application/x-www-form-urlencoded"}
-        // },
         data: {
           userid: this.$store.state.userIdCode,
           id: this.$route.query.movie,
@@ -154,37 +188,84 @@ export default {
       if (this.$store.state.userId) {
         this.toWrite = true;
         setTimeout(() => {
-          document.documentElement.scrollTop = 800;
+          document.documentElement.scrollTop = 1000;
         }, 100);
       } else {
         this.toWrite = false;
         this.$store.commit('login', 1);
       }
     },
-    closeWrite() {
+    getWrite() {
+      axios({
+        method: "post",
+        url:'content/getComments',
+        data: {
+          id: this.$route.query.movie,
+          userid: this.$store.state.userIdCode,
+          size: 0,
+        },
+        transformRequest: [
+          function(data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+            }
+            return ret;
+          }
+        ]
+      }).then(({data: {data, message, status}}) => {
+        if (status === 200) {
+          this.userComment = data;
+        } else {
+          alert(message)
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    postSubmit(text) { //提交评论
+      axios({
+        method: "post",
+        url:'content/comment',
+        data: {
+          userid: this.$store.state.userIdCode,
+          id: this.$route.query.movie,
+          comment: text,
+        },
+        transformRequest: [
+          function(data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+            }
+            return ret;
+          }
+        ]
+      }).then(({data: {message}}) => {
+        location.reload();
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+    closeWrite() { //关闭评论
       this.toWrite = false;
     },
-    see () { //想看
-      if (this.$store.state.userId) {
-
-      } else {
-        this.$store.state.type = 1;
-      }
-    },
-    like() { //喜欢
-      if (this.$store.state.userId) {
-
-      } else {
-        this.$store.state.type = 1;
-      }
-    },
-    rePraise() { //c重评
-      if (this.myScore) {
-        this.myScore = 0;
-        this.num = 0;
-      }
-    },
-    getMovie() {
+    // addDate() { //获取系统时间
+    //   const nowDate = new Date();
+    //   let date = {
+    //       year: nowDate.getFullYear(),
+    //       month: nowDate.getMonth() + 1,
+    //       day: nowDate.getDate(),
+    //   }
+    //   if (date.month < 10) {
+    //     date.month = '0' +  date.month;
+    //   } else if (date.day < 10) {
+    //     date.day = '0' +  date.day;
+    //   }
+    //   let systemDate = date.year + '-' + date.month + '-' + date.day;
+    //   this.systemDate = systemDate;
+    // },
+    getMovie() { //获取电影详情
       axios({
         method: "post",
         url:'content/getMovie',

@@ -1,12 +1,13 @@
 <template>
   <transition name="alert" appear>
     <div class="container" @mousewheel.prevent>
-      <div class="all">您还没有写短评！</div>
+      <div class="all">{{message}}</div>
     </div>
   </transition>
 </template>
 <script>
 export default {
+  props: ['message'],
   data () {
     return {
     }
@@ -17,10 +18,11 @@ export default {
 .container {
   top: 0;
   left: 0;
+  z-index: 10;
   width: 100%;
   height: 100%;
   position: fixed;
-  background-color: #3e3e3e93;
+  background-color: #ffffff00;
   .all {
     top: 50%;
     left: 50%;
@@ -37,9 +39,9 @@ export default {
 }
 .alert-enter, .alert-leave-to {
   opacity: 0;
-  transform: scale(1.1);
+  transform: translateY(-500px);
 }
 .alert-enter-active, .alert-leave-active {
-  transition: all .3s ease;
+  transition: all .5s ease;
 }
 </style>

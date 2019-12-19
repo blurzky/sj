@@ -12,17 +12,19 @@
         </div>
         <div class="content">
           <div class="movies" v-if="num === 1">
-            <div class="movie" v-for="(item,index) in 3" :key="index">
-              <img src="../pic/type/joker.webp" class="photo">
-              <div class="tip_saw" v-if="sawLike === 0 ">看过</div>
-              <div class="tip_like" v-else>喜欢</div>
+            <div class="type">
+              <div :class="index === 0 ? `tip_saw` : `tip_like`" @click="changeTip(index)" v-for="(item,index) in tip" :key="index">{{item}}</div>
+            </div>
+            <div class="movie" :style="sawLike === 1 ? {backgroundColor: `#0e98f320`} : {backgroundColor: `#fa536920`}">
+              <img :src="item" alt="" class="photo" v-for="(item,index) in mine[0].saw" :key="'info-' + index" v-show="sawLike === 1">
+              <img :src="item" alt="" class="photo" v-for="(item,index) in mine[0].like" :key="index" v-show="sawLike === -1">
             </div>
           </div>
-          <div class="comment" v-for="({star, date, praise, content},index) in mycomment" :key="index" v-else>
-            <div class="top">希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。</div>
+          <div class="comment" v-for="({score, time, praise, comment},index) in mycomment" :key="index" v-else>
+            <div class="top">{{comment}}</div>
             <div class="bottom">
-              <div v-for="(item,index) in 5" :key="index" :class="index < star ? `yellow` : `grey`"></div>
-              <div class="date">{{date}}</div>
+              <div v-for="(item,index) in 5" :key="index" :class="index < score ? `yellow` : `grey`"></div>
+              <div class="date">{{time}}</div>
               <div class="praise">{{praise}}<span class="like">有用</span></div>
             </div>
           </div>
@@ -33,28 +35,51 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data () {
     return {
       kind: ['我的评论', '我的电影'],
       num: 0,
-      mycomment: [{
-          star: 5,
-          date: '2019-11-20',
-          praise: 50,
-          content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
-        },{
-          star: 5,
-          date: '2019-11-20',
-          praise: 50,
-          content: '希斯·莱杰之后无小丑“这个论述终于是被打破了。这是当代电影史的光荣日。'
-      }],
-      sawLike: 0,
+      tip: ['我想看的', '我喜欢的'],
+      mycomment: [],
+      sawLike: 1,
+      type: false,
+      mine: this.$store.state.data,
     }
   },
+  created() {
+    this.getcomment();
+  },
   methods: {
+    changeTip(e) {
+      e !== this.type && (this.sawLike *= -1);
+    },
     change(index) {
       this.num = index;
+    },
+    getcomment() {
+      axios({
+        method: "post",
+        url:'user/findHomePage',
+        data: {
+          userid: this.$store.state.userIdCode,
+          size: 0,
+        },
+        transformRequest: [
+          function(data) {
+            let ret = '';
+            for (let it in data) {
+              ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+            }
+            return ret;
+          }
+        ]
+      }).then(({data: {data, message, status}}) => {
+        this.mycomment = data;
+      }).catch(error => {
+        console.log(error);
+      });
     }
   }
 }
@@ -84,7 +109,8 @@ export default {
         width: 200px;
         height: 200px;
         margin: 30px 0;
-        background-color: #fff;
+        background-size: 100%;
+        background-image: url('../pic/admin/head.png');
       }
       .name {
         margin: 30px 0;
@@ -159,11 +185,10 @@ export default {
               text-align: end;
               color: #6b6a6a;
               .like {
-                margin-left: 5px;
-                color: #0e98f3;
-              }
-              .like:hover {
                 color: #fff;
+                padding: 0 2px;
+                margin-left: 5px;
+                border-radius: 3px;
                 background-color: #0e98f3;
               }
             }
@@ -172,42 +197,36 @@ export default {
         .movies {
           width: 100%;
           height: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          align-items: flex-start;
-          justify-content: space-between;
-          .movie {
+          .type {
             display: flex;
             align-items: center;
-            flex-direction: column;
             justify-content: flex-start;
-            .photo {
-              width: 200px;
-              height: 300px;
-              object-fit: contain;
-              border-radius: 15px;
-            }
             .tip_saw, .tip_like {
-              width: 100px;
-              margin: 10px 0;
+              width: 50%;
               font-size: 15px;
               color: #0e98f3;
-              line-height: 30px;
-              border-radius: 5px;
+              line-height: 40px;
               text-align: center;
               transition: all .3s;
-              background-color: #fff;
             }
-            .tip_saw:hover {
+            .tip_saw:hover, .choose_saw {
               color: #fff;
               background-color: #4cb1f585;
             }
             .tip_like {
               color: #fa5369;
             }
-            .tip_like:hover {
+            .tip_like:hover, .choose_like {
               color: #fff;
               background-color: #fa536996;
+            }
+          }
+          .movie {
+            flex-wrap: wrap;
+            .photo {
+              width: 200px;
+              height: 280px;
+              padding: 15px;
             }
           }
         }

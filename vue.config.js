@@ -1,5 +1,6 @@
 module.exports = {
   devServer: {
-    proxy: 'http://192.168.5.154:3000/',
+    proxy: 'http://hyh.tanjie.wang:81/',
+    // proxy: 'http://192.168.5.154:3000/',
   }
 }

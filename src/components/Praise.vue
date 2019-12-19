@@ -1,49 +1,42 @@
 <template>
   <div class="container">
-    <div class="like" @click="praisePlus" :class="num === 1 ? `liked` : ``">有用</div>
+    <div class="like" :title="type === 1 ? '已点' : '点赞'" @click="praiseAct" :class="type === 1 ? `liked` : ``">有用</div>
     <transition name="plus">
-      <div class="plus_one" v-if="plus && show">+1</div>
-    </transition>
-    <transition name="reduce">
-      <div class="reduce_one" v-if="reduce">-1</div>
+      <div class="plus_one" v-if="show">{{num}}</div>
     </transition>
   </div>
 </template>
 
 <script>
 export default {
+  props: ['type'],
   data () {
     return {
-      num: 0,
-      show: true,
-      plus: false,
-      reduce: false,
+      num: '',
+      show: false,
     }
   },
   methods: {
-    praisePlus() {
-      if (this.$store.state.userId != '') {
-        if(this.plus === false) {
-          this.plus = true;
-          this.num ++;
-          this.$emit('praisePlus');
+    praiseAct() {
+      if (this.$store.state.userId) {
+        if(this.type === 0) {
+          this.num = '+1',
+          this.show = true;
+          this.$emit('praiseAct');
           setTimeout(() => {
-            this.show = false
+            this.show = false;
           },1000)
         } else {
-          this.plus = false;
-          this.num --;
-          this.$emit('praisePlus');
+          this.num = `-1`,
           this.show = true;
-          this.reduce = true;
+          this.$emit('praiseAct');
           setTimeout(() => {
-            this.reduce = false
+            this.show = false;
           },1000)
         }
       } else {
         this.$store.state.type = 1;
       }
-      
     }
   }
 }
@@ -60,25 +53,26 @@ export default {
   .like:hover, .liked {
     color: #fff;
     cursor: pointer;
+    border-radius: 3px;
     background-color: #1398f1;
   }
-  .plus_one, .reduce_one {
-    left: -20px;
+  .plus_one {
     top: -25px;
+    left: -30px;
+    width: 30px;
     font-size: 14px;
     color: #1398f1;
     font-weight: 600;
+    text-align: center;
     position: absolute;
-  }
-  .reduce_one {
-    left: -15px;
+    // letter-spacing: 3px;
   }
 }
-.plus-enter, .plus-leave-to, .reduce-enter, .reduce-leave-to{
+.plus-enter, .plus-leave-to {
   opacity: 0;
   transform: translateY(20px);
 }
-.plus-enter-active, .plus-leave-active, .reduce-enter-active,.reduce-leave-active{
+.plus-enter-active, .plus-leave-active {
   transition: all 0.5s ease;
 }
 

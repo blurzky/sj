@@ -43,11 +43,14 @@ export default {
           name: this.userId,
           pwd: this.password,
         },
-      }).then(({ data:{data: {brief, name, userid}, message, status} }) => {
+      }).then(({ data:{data, message, status}}) => {
+        console.log(data);
         if(status === 200) {
+          const {brief, name, userid} = data;
           this.user = {userid, name} 
           this.$store.commit('getUserId', this.user);
           this.closeLogin();
+          this.$router.go(0);
         } else {
           alert(message)
         }
