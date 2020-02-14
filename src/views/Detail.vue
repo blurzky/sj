@@ -124,6 +124,7 @@ export default {
         setTimeout(() => {
           this.alert = false
         },1500)
+      console.log(this.$store.state.data);
       } else {
         this.$store.state.type = 1;
       }
@@ -242,7 +243,7 @@ export default {
           }
         ]
       }).then(({data: {message}}) => {
-        location.reload();
+        // location.reload();
       }).catch(error => {
         console.log(error);
       });

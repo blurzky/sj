@@ -2,9 +2,23 @@
   <div class="container">
     <div class="main">
       <div class="left">
-        <div class="head"></div>
-        <div class="name">zky</div>
-        <p class="word">这个世界上有百分之五十的烦恼都是通过好好睡一觉就能解决的，至于剩下的一半，等睡醒再去想。</p>
+        <img class="head" :src="this.$store.state.head"/>
+        <div class="name">{{this.$store.state.userId}}</div>
+        <p class="word">{{this.$store.state.brief}}</p>
+        <div class="reset" @click="reSet">修改个人资料>></div>
+        <!-- <LoadImg/> -->
+        <div class="myChange" v-show="changeShow">
+          <div class="changeHead">上传头像:</div>
+            <div class="box">
+              <input type="file" id="headPic" name="file" class="headPic" @change="tirggerFile($event)">
+              <div :style="{backgroundImage: `url(${imgDataUrl})`}" class="preview" v-if="imgDataUrl">
+                <img src="../pic/admin/del.png" v-if="imgDataUrl" class="del" @click="del">
+              </div>
+              <div class="changeBrief">个人简介:</div>
+              <textarea class="text" v-model="text"></textarea>
+              <button class="submit" @click="closeChange" >确认修改</button>
+            </div>
+        </div>
       </div>
       <div class="right">
         <div class="title">
@@ -13,11 +27,12 @@
         <div class="content">
           <div class="movies" v-if="num === 1">
             <div class="type">
-              <div :class="index === 0 ? `tip_saw` : `tip_like`" @click="changeTip(index)" v-for="(item,index) in tip" :key="index">{{item}}</div>
+              <div class="tip_saw" :class="type ? `choose_saw`: ``" @click="changeTip(true)">我想看的</div>
+              <div class="tip_like" :class="type ? ``: `choose_like`" @click="changeTip(false)">我喜欢的</div>
             </div>
-            <div class="movie" :style="sawLike === 1 ? {backgroundColor: `#0e98f320`} : {backgroundColor: `#fa536920`}">
-              <img :src="item" alt="" class="photo" v-for="(item,index) in mine[0].saw" :key="'info-' + index" v-show="sawLike === 1">
-              <img :src="item" alt="" class="photo" v-for="(item,index) in mine[0].like" :key="index" v-show="sawLike === -1">
+            <div class="movie" :style="type ? {border: `2px solid #4cb1f555`} : {border: `2px solid #fa536955`}">
+              <img v-lazy="item" alt="" class="photo" v-for="(item,index) in mine.saw" :key="'info-' + index" v-show="sawLike === 1">
+              <img v-lazy="item" alt="" class="photo" v-for="(item,index) in mine.like" :key="index" v-show="sawLike === -1">
             </div>
           </div>
           <div class="comment" v-for="({score, time, praise, comment},index) in mycomment" :key="index" v-else>
@@ -33,7 +48,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 export default {
@@ -41,19 +55,24 @@ export default {
     return {
       kind: ['我的评论', '我的电影'],
       num: 0,
-      tip: ['我想看的', '我喜欢的'],
       mycomment: [],
       sawLike: 1,
-      type: false,
-      mine: this.$store.state.data,
+      type: true,
+      mine: JSON.parse(localStorage.getItem(this.$store.state.userIdCode)),
+      text: '',
+      changeShow: false,
+      imgDataUrl: '',
     }
+  },
+  components: {
+    // LoadImg: ()=> import('../components/LoadImg'),
   },
   created() {
     this.getcomment();
   },
   methods: {
     changeTip(e) {
-      e !== this.type && (this.sawLike *= -1);
+      e !== this.type && (this.sawLike *= -1) && (this.type = !this.type);
     },
     change(index) {
       this.num = index;
@@ -80,6 +99,69 @@ export default {
       }).catch(error => {
         console.log(error);
       });
+    },
+    reSet() {
+      this.changeShow = !this.changeShow;
+    },
+    del() {
+      this.imgDataUrl = '';
+    },
+    tirggerFile (event) {
+        // let self = this;
+        let file = event.target.files[0]
+        let param = new FormData() // 创建form对象
+        param.append('file', file, file.name) // 通过append向form对象添加数据
+        param.append('type', '1') // 添加form表单中其他数据
+        // console.log(param.get('file')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        // 添加请求头
+        axios.post('/content/upload', param, config)
+          .then(response => {
+            if (response.data.status == 200) {
+              this.imgDataUrl = response.data.data;
+              // self.form.img = response.data.data.img;
+              // self.form.imgURL  ='http://www.baidu.com/'+response.data.data.img;
+            }
+          })
+    },
+    closeChange() {
+      if (this.text || this.imgDataUrl) {
+        axios({
+          method: "post",
+          url:'user/changeUSerName',
+          data: {
+            userid: this.$store.state.userIdCode,
+            head: '' || this.imgDataUrl,
+            brief: '' || this.text,
+          },
+          transformRequest: [
+            function(data) {
+              let ret = '';
+              for (let it in data) {
+                ret += encodeURIComponent(it) + "=" + encodeURIComponent(data[it]) + "&";
+              }
+              return ret;
+            }
+          ]
+        }).then(({data: {data, message, status}}) => {
+          if (status === 200) {
+            if (this.text !== '') {
+              this.$store.state.brief = this.text;
+              localStorage.setItem('brief', this.text);
+            } else if (this.imgDataUrl !== '') {
+              this.$store.state.head = this.imgDataUrl;
+              localStorage.setItem('head', this.imgDataUrl);
+            }
+          }
+        }).catch(error => {
+          console.log(error);
+        });
+        this.changeShow = false;
+      } else {
+        alert('未输入')
+      }
     }
   }
 }
@@ -109,8 +191,16 @@ export default {
         width: 200px;
         height: 200px;
         margin: 30px 0;
-        background-size: 100%;
-        background-image: url('../pic/admin/head.png');
+        display: block;
+        object-fit: cover;
+      }
+      .reset {
+        font-size: 14px;
+        margin-top: 50px;
+      }
+      .reset:hover {
+        cursor: pointer;
+        color: #0e98f3;
       }
       .name {
         margin: 30px 0;
@@ -121,6 +211,74 @@ export default {
         font-size: 14px;
         text-indent: 2em;
         word-break: break-all;
+      }
+      .myChange {
+        width: 90%;
+        font-size: 14px;
+        .changeHead {
+          margin-top: 10px;
+        }
+        .box {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          justify-content: flex-start;
+          .headPic {
+            font-size: 0;
+            margin-top: 10px;
+          }
+          .headPic::-webkit-file-upload-button {
+            color: #333;
+            outline: none;
+            font-size: 14px;
+            padding: 8px 22px;
+            border-radius: 5px;
+            background: #efeeee;
+          }
+          .submitFile {
+            outline: none;
+            margin-left: 5px;
+            color: #858585;
+            padding: 8px 22px;
+            border-radius: 5px;
+            background: #e9f1e9;
+          }
+          .preview {
+            width: 150px;
+            height: 150px;
+            margin-top: 10px;
+            position: relative;
+            background-size: cover;
+            background-position: 50%;
+            .del {
+              top: -0;
+              right: -22px;
+              width: 20px;
+              height: 20px;
+              position: absolute;
+            }
+            .del:hover {
+              transition: all .3s;
+              transform: scale(1.1);
+            }
+          }
+          .changeBrief {
+            margin-top: 10px;
+            width: 100%;
+            }
+            .text {
+            width: 90%;
+            height: 100px;
+            outline: none;
+            display: block;
+            margin-top: 10px;
+            color: #696969;
+          }
+          .submit {
+            outline: none;
+            margin-top: 10px;
+          }
+        }
       }
     }
     .right {
@@ -211,14 +369,14 @@ export default {
             }
             .tip_saw:hover, .choose_saw {
               color: #fff;
-              background-color: #4cb1f585;
+              background-color: #4cb1f555;
             }
             .tip_like {
               color: #fa5369;
             }
             .tip_like:hover, .choose_like {
               color: #fff;
-              background-color: #fa536996;
+              background-color: #fa536955;
             }
           }
           .movie {

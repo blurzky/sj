@@ -44,13 +44,17 @@ export default {
           pwd: this.password,
         },
       }).then(({ data:{data, message, status}}) => {
-        console.log(data);
+        if (data.userid in localStorage) {
+          this.$store.state.data = JSON.parse(localStorage.getItem(data.userid));
+          this.$store.state.saw =  this.$store.state.data.saw;
+          this.$store.state.like =  this.$store.state.data.like;
+        }
         if(status === 200) {
-          const {brief, name, userid} = data;
-          this.user = {userid, name} 
+          this.user = data;
+          console.log(this.user);
           this.$store.commit('getUserId', this.user);
           this.closeLogin();
-          this.$router.go(0);
+          // this.$router.go(0);
         } else {
           alert(message)
         }

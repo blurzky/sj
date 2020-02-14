@@ -2,9 +2,9 @@
   <transition name="pics" appear>
     <div class="container" @mousewheel.prevent @click="closePic" :style="{height: `${height}px`, width: `${width}px`}">
       <div class="pic">
-        <img class="left_arrow" src="../pic/lunbo/左箭头.png" @click.stop @click="left" v-if="main.length != 1" title="上一张">
+        <img class="left_arrow" src="../pic/lunbo/左箭头.png" @click.stop @click="left" v-if="main.length != 1" :title="photoNumber === 0 ? `已经是第一张了` : `上一张`">
         <img :class="main.length == 1 ? 'mainPicture' : 'picture'" :src="main[photoNumber]"/>
-        <img class="right_arrow" src="../pic/lunbo/右箭头.png" @click.stop @click="right" v-if="main.length != 1" title="下一张">
+        <img class="right_arrow" src="../pic/lunbo/右箭头.png" @click.stop @click="right" v-if="main.length != 1" :title="photoNumber === 5 ? `已经是最后一张了` : `下一张`">
       </div>
     </div>
   </transition>

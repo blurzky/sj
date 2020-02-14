@@ -3,7 +3,7 @@
     <div class="leftNav">{{name}}</div>
     <div class="all">
       <div class="movie" v-for="({id, cover, title, score, content},index) in type" :key="index">
-        <img :src="cover" :title="title"  @click="goDetail(id)" class="cover">
+        <img v-lazy="cover" :title="title"  @click="goDetail(id)" class="cover">
         <div class="info">
           <div class="name">{{title}}</div>
           <div class="point" v-if="score">{{score.toFixed(1)}}</div>

@@ -12,7 +12,7 @@
       </div>
       <div class="division"></div>
       <img class="homepage" v-if="user != 'zky' && user" src="../pic/topNav/home.png"/>
-      <a class="admin" v-if="user === 'zky'" href='http://192.168.5.52:9528/'>管理员</a>
+      <a class="admin" v-if="user === 'zky'" href='http://zky.liyi.life/'>管理员</a>
       <div class="mine" v-if="user" @click="$router.push('/person')">{{user}}</div>
       <div v-if="!user" class="login" @click="login()">登录</div>
       <div v-if="!user" class="register" @click="register()">注册</div>
@@ -63,8 +63,9 @@ export default {
     goPage(index) {
       if(index === 0) {
         this.$router.push('/'); 
-      }
-      if(index === 3) {
+      } else if (index === 1) {
+        this.$router.push('/comic')
+      } else if(index === 3) {
         this.$router.push('/typePage?index=2');
       }
     },

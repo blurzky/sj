@@ -7,7 +7,7 @@
       </div>
       <div class="line">
         <div class="content" v-for="({id, cover, title, score, content},index) in item.movie" :key="index">
-          <img :src="cover" :title="title" class="photo" @click="goDetail(id)">
+          <img v-lazy="cover" :title="title" class="photo" @click="goDetail(id)">
           <div class="all">
             <div class="name">{{title}}</div>
             <div class="point" v-if="score">{{score.toFixed(1)}}</div>

@@ -20,6 +20,9 @@ const routes = [
   },{
     path: '/admin',
     component: () => import('../views/Admin.vue'),
+  },{
+    path: '/comic',
+    component: () => import('../views/Comic.vue'),
   },
 ]
 
