@@ -80,7 +80,7 @@ export default {
     getcomment() {
       axios({
         method: "post",
-        url:'user/findHomePage',
+        url:'zky/user/findHomePage',
         data: {
           userid: this.$store.state.userIdCode,
           size: 0,
@@ -130,7 +130,7 @@ export default {
       if (this.text || this.imgDataUrl) {
         axios({
           method: "post",
-          url:'user/changeUSerName',
+          url:'zky/user/changeUSerName',
           data: {
             userid: this.$store.state.userIdCode,
             head: '' || this.imgDataUrl,
@@ -268,6 +268,7 @@ export default {
             }
             .text {
             width: 90%;
+            resize: none;
             height: 100px;
             outline: none;
             display: block;

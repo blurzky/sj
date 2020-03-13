@@ -28,7 +28,7 @@ export default {
     getMovieList() {
       axios({
         method: "get",
-        url:'content/getMovieList',
+        url:'zky/content/getMovieList',
         transformRequest: [
           function(data) {
             let ret = '';

@@ -1,6 +1,13 @@
 module.exports = {
   devServer: {
-    proxy: 'http://hyh.tanjie.wang:81/',
-    // proxy: 'http://192.168.5.154:3000/',
+    proxy: {
+      '/zky': {
+        target: 'http://hyh.tanjie.wang:81/',
+        changeOrigin: true,
+        pathRewrite: {
+          "^/zky": ""
+        }
+      }
+    },
   }
 }

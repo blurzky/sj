@@ -159,7 +159,7 @@ export default {
     give() { //打分
       axios({
         method: "post",
-        url:'content/score',
+        url:'zky/content/score',
         data: {
           userid: this.$store.state.userIdCode,
           id: this.$route.query.movie,
@@ -199,7 +199,7 @@ export default {
     getWrite() {
       axios({
         method: "post",
-        url:'content/getComments',
+        url:'zky/content/getComments',
         data: {
           id: this.$route.query.movie,
           userid: this.$store.state.userIdCode,
@@ -227,7 +227,7 @@ export default {
     postSubmit(text) { //提交评论
       axios({
         method: "post",
-        url:'content/comment',
+        url:'zky/content/comment',
         data: {
           userid: this.$store.state.userIdCode,
           id: this.$route.query.movie,
@@ -243,7 +243,7 @@ export default {
           }
         ]
       }).then(({data: {message}}) => {
-        // location.reload();
+        location.reload();
       }).catch(error => {
         console.log(error);
       });
@@ -269,7 +269,7 @@ export default {
     getMovie() { //获取电影详情
       axios({
         method: "post",
-        url:'content/getMovie',
+        url:'zky/content/getMovie',
         // headers: {
         //   post: {"Content-type": "application/x-www-form-urlencoded"}
         // },

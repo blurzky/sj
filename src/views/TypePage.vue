@@ -55,7 +55,7 @@ export default {
     searchMovies() {
       axios({
         method: "post",
-        url:'content/searchMovies',
+        url:'zky/content/searchMovies',
         data: {
           type: this.$route.query.index - (-1),
           size: this.size,
@@ -83,7 +83,7 @@ export default {
     findMoviesCounts() {
       axios({
         method: "post",
-        url:'content/findMoviesCounts',
+        url:'zky/content/findMoviesCounts',
         data: {
           type: this.$route.query.index - (-1),
           keyWord: '',

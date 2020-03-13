@@ -44,7 +44,7 @@ export default {
     rigis() {
       axios({
         method: "post",
-        url:'user/registerUser',
+        url:'zky/user/registerUser',
         // headers: {
         //   post: {"Content-type": "application/x-www-form-urlencoded"}
         // },
@@ -139,6 +139,7 @@ export default {
     }
     .brief {
       width: 220px;
+      resize: none;
       outline: none;
       height: 280px;
       border-radius: 5px;

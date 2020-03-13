@@ -61,7 +61,7 @@ export default {
       if (this.userComment[index].type === 0) {
         axios({
           method: "post",
-          url:'content/praiseComment',
+          url:'zky/content/praiseComment',
           data: {
             cid: this.userComment[index].cid,
             userid: this.$store.state.userIdCode,
@@ -88,7 +88,7 @@ export default {
       } else {
         axios({
           method: "post",
-          url:'content/delPraiseComment',
+          url:'zky/content/delPraiseComment',
           data: {
             cid: this.userComment[index].cid,
             userid: this.$store.state.userIdCode,

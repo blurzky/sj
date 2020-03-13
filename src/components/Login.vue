@@ -38,17 +38,12 @@ export default {
     login() {
       axios({
         method: "post",
-        url:'user/login',
+        url:'zky/user/login',
         data: {
           name: this.userId,
           pwd: this.password,
         },
       }).then(({ data:{data, message, status}}) => {
-        if (data.userid in localStorage) {
-          this.$store.state.data = JSON.parse(localStorage.getItem(data.userid));
-          this.$store.state.saw =  this.$store.state.data.saw;
-          this.$store.state.like =  this.$store.state.data.like;
-        }
         if(status === 200) {
           this.user = data;
           console.log(this.user);
@@ -57,6 +52,11 @@ export default {
           // this.$router.go(0);
         } else {
           alert(message)
+        }
+        if (data.userid in localStorage) {
+          this.$store.state.data = JSON.parse(localStorage.getItem(data.userid));
+          this.$store.state.saw =  this.$store.state.data.saw;
+          this.$store.state.like =  this.$store.state.data.like;
         }
       }).catch(error => {
         console.log(error);
